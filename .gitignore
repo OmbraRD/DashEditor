@@ -1,3 +1,7 @@
+# Temp files
+Tests.py
+*.txt
+
 # Game Data
 DAT/
 DAT JAP/

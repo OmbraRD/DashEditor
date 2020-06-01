@@ -108,7 +108,8 @@ def do_unpack_bin():
 
                 # Write file info to index file for packing later
                 index_file.write(
-                    file_name_to_write.replace(full_path_and_file_no_ext + "/", "") + "," + str(padded_file_size) + "\n")
+                    file_name_to_write.replace(full_path_and_file_no_ext + "/", "") + "," + str(
+                        padded_file_size) + "\n")
 
                 # Set offset to the old offset + the size of the aligned files
                 offset = offset + padded_file_size
@@ -125,7 +126,6 @@ def do_unpack_bin():
         print("\nThe amount of extracted files matches the occurrences.")
     else:
         print("\nSome files where not extracted successfully.")
-    return
 
 
 def do_pack_bin():
@@ -138,7 +138,7 @@ def do_pack_bin():
     while index_file_item < len(index_file_data):
 
         path_inner_file_to_write = (
-            full_file_or_folder_name + "/" + index_file_data[index_file_item].replace("\\n", "").split(",")[0])
+                full_file_or_folder_name + "/" + index_file_data[index_file_item].replace("\\n", "").split(",")[0])
         file_to_write_index_len = index_file_data[index_file_item].replace("\\n", "").split(",")[1]
 
         # If the path does not exist. ERROR
@@ -148,8 +148,8 @@ def do_pack_bin():
             error = True
         # If the file sizes don't match. ERROR
         elif os.path.getsize(path_inner_file_to_write) != int(file_to_write_index_len):
-            print(path_inner_file_to_write + " has a size of " + str(os.path.getsize(path_inner_file_to_write)) +
-                  " instead of " + file_to_write_index_len + " bytes")
+            print("{} has a size of {} instead of {} bytes".format(
+                path_inner_file_to_write, str(os.path.getsize(path_inner_file_to_write)), file_to_write_index_len))
             index_file_item += 1
             error = True
         else:
@@ -157,8 +157,8 @@ def do_pack_bin():
 
     # If all the tests pass,
     if not error:
-        print("Creating " + full_file_or_folder_name + ".BIN file...")
-        output_bin = open(full_file_or_folder_name + ".BIN", "ab")
+        print("Creating {}.BIN file...".format(full_file_or_folder_name))
+        output_bin = open("{}.BIN".format(full_file_or_folder_name), "ab")
 
         index_file_item = 0
         end_file_size = 0
@@ -166,8 +166,8 @@ def do_pack_bin():
 
         while index_file_item < len(index_file_data):
             # Get file path and open it
-            path_inner_file_to_write = (
-                full_file_or_folder_name + "/" + index_file_data[index_file_item]).replace("\\n", "").split(",")[0]
+            path_inner_file_to_write = "{}/{}".format(
+                full_file_or_folder_name, index_file_data[index_file_item].replace("\\n", "").split(",")[0])
             file_to_write = open(path_inner_file_to_write, "rb")
             # Write the contents of opened file to destination BIN and close opened file
             output_bin.write(file_to_write.read())
@@ -184,31 +184,31 @@ def do_pack_bin():
         output_bin.write(end_padding * b'\x00')
 
         output_bin.close()
-    return
 
 
-help_msg = ("DashEditor v0.2 - Mega Man Legends Hacking Suite\n"
-            "Created by _Ombra_ of SadNES cITy Translations\n"
-            "Website: http://www.sadnescity.it\n\n"
-            "DashEditor.py [option] [file or folder]\n\n"
-            "  -e   unpacks che content of BIN files.\n"
-            "  -c   packs a folder to BIN files.\n")
+help_msg = (
+"""\nDashEditor v0.2 - Mega Man Legends Hacking Suite
+Created by _Ombra_ of SadNES cITy Translations
+Website: http://www.sadnescity.it\n
+DashEditor.py [option] [file or folder]\n
+  -e   unpacks che content of BIN files.
+  -c   packs a folder to BIN files.\n""")
 
 # Check if 2 arguments are passed
 if len(sys.argv) != 3:
-    print(help_msg + "\nOne or more arguments missing or too many")
+    print("{}\nOne or more arguments missing or too many".format(help_msg))
 # If they are, check if the command argument is valid
-elif sys.argv[1] != "-e" and sys.argv[1] != "-c":
-    print(help_msg + "\nInvalid command!")
+elif ("-e" or "-c") not in sys.argv[1]:
+    print("{}\nInvalid command!".format(help_msg))
 # If the command argument is valid, check if file exists and open it
 elif not os.path.exists(sys.argv[2]):
-    print("File or folder not found")
+    print("\nFile or folder not found")
 
 # If second argument is -e and third argument is file
 elif sys.argv[1] == "-e" and not os.path.isfile(sys.argv[2]):
-    print("Expected file. Provided folder")
+    print("\nExpected file. Provided folder")
 elif sys.argv[1] == "-c" and not os.path.isdir(sys.argv[2]):
-    print("Expected folder. Provided file")
+    print("\nExpected folder. Provided file")
 else:
     # Ex: TEST/TEST2/FILE.BIN or TEST/TEST2
     full_file_or_folder_name: str = sys.argv[2].replace("\\", "/")
@@ -221,36 +221,35 @@ else:
 
     # Full path to the index file
     # Ex: TEST/TEST2 == TEST/TEST2/TEST2.txt
-    index_file_path = full_path_and_file_no_ext + "/" + file_name_only.replace(".BIN", "") + ".txt"
+    index_file_path = "{}/{}.txt".format(full_path_and_file_no_ext, file_name_only.replace(".BIN", ""))
 
     if sys.argv[1] == "-e" and os.path.isfile(sys.argv[2]):
-        file = open(full_file_or_folder_name, "rb")
-        file_data: bytes = file.read()
+        file_data = open(full_file_or_folder_name, "rb").read()
 
         # Check if the file is a valid MML BIN file
         try:
             assert file_data[64:67].decode("ascii") == "..\\"
         except AssertionError:
-            print("Not a valid MML PSX BIN file\n")
+            print("\nNot a valid MML PSX BIN file")
+        else:
 
-        # Create index file
-        if not os.path.exists(full_path_and_file_no_ext):
-            os.mkdir(full_path_and_file_no_ext)
+            # Create index file
+            if not os.path.exists(full_path_and_file_no_ext):
+                os.mkdir(full_path_and_file_no_ext)
 
-        index_file = open(index_file_path, "w+")
+            index_file = open(index_file_path, "w+")
 
-        # Proceed with extraction
-        do_unpack_bin()
-        file.close()
+            # Proceed with extraction
+            do_unpack_bin()
 
     # If argument is -c, pack BIN files
 
     elif sys.argv[1] == "-c" and os.path.isdir(sys.argv[2]):
 
         if not os.path.exists(index_file_path):
-            print("Index file missing")
-        elif os.path.exists(full_path_and_file_no_ext + "/" + file_name_only + ".BIN"):
-            print("BIN file already exists")
+            print("\nIndex file missing")
+        elif os.path.exists("{}/{}.BIN".format(full_path_and_file_no_ext, file_name_only)):
+            print("\nBIN file already exists")
         else:
             index_file = open(index_file_path, "r")
             index_file_data: list = index_file.readlines()
