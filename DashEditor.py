@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, re, sys
+import sys
 from Formats.BIN import *
 from Formats.MSG import *
 
@@ -55,7 +55,7 @@ else:
             if not os.path.exists(full_path_and_file_no_ext):
                 os.mkdir(full_path_and_file_no_ext)
 
-            index_file = open(index_file_path, "w+")
+            index_file = open(index_file_path, "a")
 
             # Proceed with extraction
             do_unpack_bin(full_path_and_file_no_ext, file_data, index_file)
