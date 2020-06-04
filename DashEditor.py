@@ -55,7 +55,7 @@ else:
             if not os.path.exists(full_path_and_file_no_ext):
                 os.mkdir(full_path_and_file_no_ext)
 
-            index_file = open(index_file_path, "a")
+            index_file = open(index_file_path, "w")
 
             # Proceed with extraction
             do_unpack_bin(full_path_and_file_no_ext, file_data, index_file)

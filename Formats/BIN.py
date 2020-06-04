@@ -90,10 +90,12 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
 
                 file_name_to_write = "{}/{}".format(full_path, inner_file_name)
 
-                existing_file_counter = 0
                 if os.path.exists(file_name_to_write):
-                    file_name_to_write = "{}/{}_{}.{}".format(
-                        full_path, inner_file_name_only, str(existing_file_counter), inner_file_name_extension)
+                    existing_file_counter = 0
+                    while os.path.exists(file_name_to_write):
+                        file_name_to_write = "{}/{}_{}.{}".format(
+                            full_path, inner_file_name_only, str(existing_file_counter), inner_file_name_extension)
+                        existing_file_counter += 1
 
                 inner_file = open(file_name_to_write, "wb")
 
