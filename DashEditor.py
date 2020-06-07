@@ -3,7 +3,7 @@
 import sys
 from Formats.BIN import *
 from Formats.MSG import *
-
+from Formats.TIM import *
 
 help_msg = (
 """\nDashEditor v0.3 - Mega Man Legends Hacking Suite
@@ -55,16 +55,32 @@ else:
             if not os.path.exists(full_path_and_file_no_ext):
                 os.mkdir(full_path_and_file_no_ext)
 
-            index_file = open(index_file_path, "w")
+            index_file = open(index_file_path, "w+")
 
             # Proceed with extraction
             do_unpack_bin(full_path_and_file_no_ext, file_data, index_file)
 
+            index_file.seek(0)
+            index_file_content = index_file.read().splitlines()
+            index_file_line = 0
+
+            while index_file_line < len(index_file_content):
+                if any(fn in index_file_content[index_file_line] for fn in (".msg", ".MSG")):
+                    msg_file_name = index_file_content[index_file_line].split(",")[0]
+                    msg_file_path = index_file_path.replace(os.path.basename(index_file_path), "") + msg_file_name
+                    do_decode_msg(msg_file_path)
+                    index_file_content = index_file_content.pop(0)
+                    index_file_line += 1
+                elif any(fn in index_file_content[index_file_line] for fn in (".tim", ".TIM")):
+                    tim_file_name = index_file_content[index_file_line].split(",")[0]
+                    tim_file_path = index_file_path.replace(os.path.basename(index_file_path), "") + tim_file_name
+                    do_extract_tim(tim_file_path)
+                    index_file_line += 1
+                else:
+                    index_file_line += 1
+
             # Close the index file and return
             index_file.close()
-
-            # Proceed with MSG extraction
-            do_decode_msg(index_file_path)
 
     # If argument is -c, pack BIN files
     elif sys.argv[1] == "-c" and os.path.isdir(sys.argv[2]):
@@ -77,4 +93,5 @@ else:
             index_file = open(index_file_path, "r")
             index_file_data: list = index_file.readlines()
             index_file.close()
+
             do_pack_bin(full_file_or_folder_name, index_file_data)

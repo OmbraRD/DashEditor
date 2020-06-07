@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-import os
-
 
 def do_decode_block(block_data):
 
@@ -103,7 +101,7 @@ def do_decode_block(block_data):
                 decoded_block += '<MSG_ID {:02X}{:02X}>'.format(b3, b2)
                 i += 2
             elif b1 == 0x9F:
-                decoded_block += '\n<WIN SUB T={:02X} REF={:02X}{:02X}>\n'.format(b4, b3, b2)
+                decoded_block += '\n<WIN_SUB T={:02X} REF={:02X}{:02X}>\n'.format(b4, b3, b2)
                 i += 3
             elif b1 == 0xA0:
                 decoded_block += '<PAD {:02X}{:02X}>'.format(b3, b2)
@@ -145,15 +143,8 @@ def do_decode_block(block_data):
     return decoded_block
 
 
-def do_decode_msg(index_file_path):
+def do_decode_msg(msg_file_path):
     header = 2048  # 0x800
-
-    # Open the index file
-    index_file = open(index_file_path, "r").read()
-
-    # Get the file path for .MSG/.msg files
-    msg_file_name = ([x for x in index_file.splitlines() if ".msg" in x or ".MSG" in x])[0].split(",")[0]
-    msg_file_path = index_file_path.replace(os.path.basename(index_file_path), "") + msg_file_name
 
     print("\nDecoding {}".format(msg_file_path))
     # Open MSG file

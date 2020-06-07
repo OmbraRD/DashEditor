@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-import os, re
+import os
+import re
 
 
 def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):

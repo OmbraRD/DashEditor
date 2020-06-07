@@ -1,5 +1,5 @@
 # DashEditor
-**MegaMan Legends Translation Toolkit v0.3**  
+**MegaMan Legends Translation Toolkit v0.4**  
 **Created by \_Ombra_ of SadNES cITy Translations**  
 **Website: http://www.sadnescity.it**  
 
