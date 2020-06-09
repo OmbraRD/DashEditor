@@ -6,7 +6,7 @@ from Formats.MSG import *
 from Formats.TIM import *
 
 help_msg = (
-"""\nDashEditor v0.3 - Mega Man Legends Hacking Suite
+"""\nDashEditor v0.4 - Mega Man Legends Hacking Suite
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n
@@ -65,16 +65,14 @@ else:
             index_file_line = 0
 
             while index_file_line < len(index_file_content):
+                file_name = index_file_content[index_file_line].split(",")[0]
+                file_path = index_file_path.replace(os.path.basename(index_file_path), "") + file_name
                 if any(fn in index_file_content[index_file_line] for fn in (".msg", ".MSG")):
-                    msg_file_name = index_file_content[index_file_line].split(",")[0]
-                    msg_file_path = index_file_path.replace(os.path.basename(index_file_path), "") + msg_file_name
-                    do_decode_msg(msg_file_path)
+                    do_decode_msg(file_path)
                     index_file_content = index_file_content.pop(0)
                     index_file_line += 1
                 elif any(fn in index_file_content[index_file_line] for fn in (".tim", ".TIM")):
-                    tim_file_name = index_file_content[index_file_line].split(",")[0]
-                    tim_file_path = index_file_path.replace(os.path.basename(index_file_path), "") + tim_file_name
-                    do_extract_tim(tim_file_path)
+                    do_extract_tim(file_path)
                     index_file_line += 1
                 else:
                     index_file_line += 1

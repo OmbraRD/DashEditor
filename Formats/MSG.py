@@ -143,12 +143,12 @@ def do_decode_block(block_data):
     return decoded_block
 
 
-def do_decode_msg(msg_file_path):
+def do_decode_msg(file_path):
     header = 2048  # 0x800
 
-    print("\nDecoding {}".format(msg_file_path))
+    print("\nDecoding {}".format(file_path))
     # Open MSG file
-    msg_file = open(msg_file_path, "rb").read()
+    msg_file = open(file_path, "rb").read()
     # Read pointer table size
     ptr_tbl_size = int.from_bytes(msg_file[header:header + 2], byteorder="little")
     # Read pointer table data
@@ -156,7 +156,7 @@ def do_decode_msg(msg_file_path):
 
     print("Pointer table contains {} blocks".format(int(ptr_tbl_size / 2 - 1)))
 
-    output_file = open(msg_file_path + ".txt", "w")
+    output_file = open(file_path + ".txt", "w")
 
     ptr_tbl_offset = 0
     block_number = 1

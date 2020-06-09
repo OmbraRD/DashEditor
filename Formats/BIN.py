@@ -108,9 +108,7 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
                 inner_file.close()
 
                 # Write file info to index file for packing later
-                index_file.write(
-                    file_name_to_write.replace(full_path_and_file_no_ext + "/", "") + "," + str(
-                        padded_fsize) + "\n")
+                index_file.write(re.sub(r'^.*?/', "", file_name_to_write) + "," + str(padded_fsize) + "\n")
 
                 # Set offset to the old offset + the size of the aligned files
                 offset = offset + padded_fsize
