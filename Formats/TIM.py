@@ -22,7 +22,7 @@ def do_decode_pixel_data(tim_pixel_data, tim_img_size, tim_colors, tim_height, t
                 for by in range(0, blockh):
                     for bx in range(0, blockw, inc):
                         px = tim_pixel_data[rofs]
-                        decoded_pixel_data[((y + by) * blockw) + ((x + bx) // 2)] = px
+                        decoded_pixel_data[((y + by) * (timw // 2)) + ((x + bx) // 2)] = px
                         rofs += 1
         return decoded_pixel_data
 
@@ -87,5 +87,8 @@ def do_extract_tim(file_path):
         )
         output_file.close()
 
-    elif any(b in tim_file[0:4] for b in (b'\x04\x00\x00\x00', b'\x09\x00\x00\x00', b'\x0A\x00\x00\x00')):
-        print("Not implemented yet")
+    elif tim_file[0:4] == b'\x09\x00\x00\x00':
+        print("CLUT only TIM file")
+
+    elif tim_file[0:4] == b'\x0A\x00\x00\x00':
+        print("CLUT Patch inside TIM file")
