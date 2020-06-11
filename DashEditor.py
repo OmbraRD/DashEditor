@@ -5,8 +5,9 @@ from Formats.BIN import *
 from Formats.MSG import *
 from Formats.TIM import *
 
+
 help_msg = (
-"""\nDashEditor v0.4 - Mega Man Legends Hacking Suite
+"""\nDashEditor v0.5 - Mega Man Legends Hacking Suite
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n

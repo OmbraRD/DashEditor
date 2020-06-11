@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from Formats.BIN import bytes_to_uint
+
 
 def do_decode_block(block_data):
 
@@ -150,7 +152,7 @@ def do_decode_msg(file_path):
     # Open MSG file
     msg_file = open(file_path, "rb").read()
     # Read pointer table size
-    ptr_tbl_size = int.from_bytes(msg_file[header:header + 2], byteorder="little")
+    ptr_tbl_size = bytes_to_uint(msg_file[header:header + 2])
     # Read pointer table data
     ptr_tbl_data = msg_file[header:header + ptr_tbl_size]
 
@@ -162,10 +164,8 @@ def do_decode_msg(file_path):
     block_number = 1
 
     while ptr_tbl_offset < ptr_tbl_size - 2:
-        block_start_offset = header + int.from_bytes(
-            ptr_tbl_data[ptr_tbl_offset:ptr_tbl_offset + 2], byteorder="little")
-        block_end_offset = header + int.from_bytes(
-            ptr_tbl_data[ptr_tbl_offset + 2:ptr_tbl_offset + 4], byteorder="little")
+        block_start_offset = header + bytes_to_uint(ptr_tbl_data[ptr_tbl_offset:ptr_tbl_offset + 2])
+        block_end_offset = header + bytes_to_uint(ptr_tbl_data[ptr_tbl_offset + 2:ptr_tbl_offset + 4])
 
         block_data = msg_file[block_start_offset:block_end_offset]
 

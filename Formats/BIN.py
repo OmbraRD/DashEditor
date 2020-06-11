@@ -4,6 +4,21 @@ import os
 import re
 
 
+def bytes_to_uint(data):
+    data = int.from_bytes(data, byteorder="little")
+    return data
+
+
+def uint_to_bytes(data):
+    two_bytes = data.to_bytes(2, byteorder="little")
+    return two_bytes
+
+
+def ulong_to_bytes(data):
+    four_bytes = data.to_bytes(4, byteorder="little")
+    return four_bytes
+
+
 def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
     # Find all files inside the archive
     occurrences = re.findall(b"\\x2E\\x2E\\x5C", f_data)
@@ -49,8 +64,8 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
                 # Size = Width (0x24) * Height (0x28) * 2
                 # Regular TIM
                 if f_data[offset:offset + 4] == b'\x01\x00\x00\x00':  # TIM
-                    tim_width = int.from_bytes(f_data[offset + 36:offset + 40], byteorder="little")
-                    tim_height = int.from_bytes(f_data[offset + 40:offset + 44], byteorder="little")
+                    tim_width = bytes_to_uint(f_data[offset + 36:offset + 40])
+                    tim_height = bytes_to_uint(f_data[offset + 40:offset + 44])
                     file_len = tim_width * tim_height * 2
 
                 # CLT, Imageless TIM with CLUT only or Imageless TIM with CLUT Patch
@@ -58,17 +73,17 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
                 elif ((f_data[offset:offset + 4] == b'\x04\x00\x00\x00') or  # CLT
                       (f_data[offset:offset + 4] == b'\x09\x00\x00\x00') or  # Imageless CLUT (in TIM format)
                       (f_data[offset:offset + 4] == b'\x0A\x00\x00\x00')):  # Imagelesss CLUT Patch(in TIM format)
-                    clt_tim_width = int.from_bytes(f_data[offset + 20:offset + 24], byteorder="little")
-                    clt_tim_height = int.from_bytes(f_data[offset + 24:offset + 28], byteorder="little")
+                    clt_tim_width = bytes_to_uint(f_data[offset + 20:offset + 24])
+                    clt_tim_height = bytes_to_uint(f_data[offset + 24:offset + 28])
                     file_len = clt_tim_width * clt_tim_height * 2
 
                 # FONT
                 elif f_data[offset:offset + 4] == b'\x03\x00\x00\x00':  # FONT
-                    file_len = int.from_bytes(f_data[offset + 4:offset + 8], byteorder="little") + 1
+                    file_len = bytes_to_uint(f_data[offset + 4:offset + 8]) + 1
 
                 # Anything else.
                 else:
-                    file_len = int.from_bytes(f_data[offset + 4:offset + 8], byteorder="little") + padding
+                    file_len = bytes_to_uint(f_data[offset + 4:offset + 8]) + padding
 
                     padded_fsize = ((file_len // padding) + 1) * padding
                     # This fixes files that already have an aligned size or that still have data in the middle
