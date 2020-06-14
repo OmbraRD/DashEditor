@@ -5,7 +5,7 @@ from Formats.BIN import bytes_to_uint, ulong_to_bytes, uint_to_bytes
 
 def do_decode_pixel_data(tim_pixel_data, tim_img_size, tim_colors, tim_height, tim_width):
 
-    decoded_pixel_data = [0] * bytes_to_uint(tim_img_size)
+    decoded_pixel_data = [0] * (bytes_to_uint(tim_img_size) - 12)
     blockw = 128
     blockh = 32
     timcolors = bytes_to_uint(tim_colors)

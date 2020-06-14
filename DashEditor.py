@@ -2,8 +2,9 @@
 
 import sys
 from Formats.BIN import *
-from Formats.MSG import *
-from Formats.TIM import *
+from Formats.MSG import do_decode_msg
+from Formats.TIM import do_extract_tim
+from Formats.FONT import do_extract_font
 
 
 help_msg = (
@@ -68,12 +69,18 @@ else:
             while index_file_line < len(index_file_content):
                 file_name = index_file_content[index_file_line].split(",")[0]
                 file_path = index_file_path.replace(os.path.basename(index_file_path), "") + file_name
+                # If MSG files are found, dump them
                 if any(fn in index_file_content[index_file_line] for fn in (".msg", ".MSG")):
                     do_decode_msg(file_path)
                     index_file_content = index_file_content.pop(0)
                     index_file_line += 1
+                # If TIM files are found, convert them
                 elif any(fn in index_file_content[index_file_line] for fn in (".tim", ".TIM")):
                     do_extract_tim(file_path)
+                    index_file_line += 1
+                # If FONT files are found, convert them
+                elif any(fn in index_file_content[index_file_line].upper() for fn in ("FONT.DAT", "KAIFONT.DAT")):
+                    do_extract_font(file_path)
                     index_file_line += 1
                 else:
                     index_file_line += 1
