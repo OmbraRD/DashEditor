@@ -62,10 +62,10 @@ def do_ord_pixel_data(tim_colors, tim_img_size, tim_width, tim_height, tim_pixel
         return ord_pixel_data
 
 
-def do_compress_tim(original_tim, edited_tim):
+def do_insert_tim(original_tim, edited_tim):
     header = 2048  # 0x800
 
-    print("Converting {}".format(original_tim))
+    print("Inserting {}".format(original_tim))
     # Open TIM file
     original_tim = open(original_tim, "rb+")
     edited_tim = open(edited_tim, "rb").read()
@@ -97,7 +97,7 @@ def do_compress_tim(original_tim, edited_tim):
 def do_extract_tim(file_path):
     header = 2048  # 0x800
 
-    print("Converting {}".format(file_path))
+    print("Extracting {}".format(file_path))
     # Open TIM file
     tim_file = open(file_path, "rb").read()
 

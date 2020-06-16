@@ -3,11 +3,11 @@
 import sys
 from Formats.BIN import *
 from Formats.MSG import do_decode_msg
-from Formats.TIM import do_extract_tim, do_compress_tim
-from Formats.FONT import do_extract_font
+from Formats.TIM import do_extract_tim, do_insert_tim
+from Formats.FONT import do_extract_font, do_insert_font
 
 help_msg = (
-    """\nDashEditor v0.6 - Mega Man Legends Hacking Suite
+    """\nDashEditor v0.7 - Mega Man Legends Translation Toolkit
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n
@@ -107,7 +107,14 @@ else:
                     edited_tim = (index_file_path.replace(os.path.basename(index_file_path), "")
                                   + file_name.replace(".TIM", "_EXT.TIM"))
                     if os.path.exists(original_tim) and os.path.exists(edited_tim):
-                        do_compress_tim(original_tim, edited_tim)
+                        do_insert_tim(original_tim, edited_tim)
+                    index_file_line += 1
+                elif any(fn in index_file_content[index_file_line].upper() for fn in ("FONT.DAT", "KAIFONT.DAT")):
+                    original_font = (index_file_path.replace(os.path.basename(index_file_path), "") + file_name)
+                    edited_font = (index_file_path.replace(os.path.basename(index_file_path), "")
+                                   + file_name.replace(".DAT", ".TIM"))
+                    if os.path.exists(original_font) and os.path.exists(edited_font):
+                        do_insert_font(original_font, edited_font)
                     index_file_line += 1
                 else:
                     index_file_line += 1

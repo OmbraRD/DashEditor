@@ -3,14 +3,45 @@
 from Formats.BIN import bytes_to_uint, ulong_to_bytes
 
 
-def do_extract_font(file_path):
+img_width = 256
+img_height = 512
+block_width = 128
+block_height = 32
 
+
+def do_insert_font(original_font, edited_font):
+    print("Inserting {}".format(edited_font))
+    # Open FONT file
+    original_font = open(original_font, "rb+")
+    edited_font = open(edited_font, "rb").read()
+
+    pixel_data = edited_font[64:]
+
+    ord_pixel_data = [0] * 32768
+
+    offset = 0
+
+    for y in range(0, img_height // 2, block_height):
+        for x in range(0, img_width, block_width):
+            for by in range(0, block_height):
+                for bx in range(0, block_width, 2):
+                    px_top = pixel_data[((y + by) * (img_width // 2)) + ((x + bx) // 2)]
+                    px_top = px_top << 0
+                    px_bottom = pixel_data[32768 + (((y + by) * (img_width // 2)) + ((x + bx) // 2))]
+                    px_bottom = px_bottom << 2
+
+                    ord_pixel_data[offset] = px_top + px_bottom
+                    offset += 1
+
+    original_font.seek(2048)
+    original_font.write(bytearray(ord_pixel_data))
+    original_font.close()
+
+
+def do_extract_font(file_path):
     print("Extracting {}".format(file_path))
     # Open FONT file
     font_file = open(file_path, "rb").read()
-
-    img_width = 256
-    img_height = 512
 
     tim_tag = b'\x10\x00\x00\x00'
     tim_bpp = b'\x08\x00\x00\x00'
@@ -29,9 +60,6 @@ def do_extract_font(file_path):
     tim_height = b'\x00\x02'
     tim_pixel_data = font_file[2048:]
 
-    block_width = 128
-    block_height = 32
-
     decoded_pixel_data_top = [0] * ((bytes_to_uint(tim_img_size) - 12) // 2)
     decoded_pixel_data_bottom = [0] * ((bytes_to_uint(tim_img_size) - 12) // 2)
     offset = 0
@@ -40,13 +68,13 @@ def do_extract_font(file_path):
         for x in range(0, img_width, block_width):
             for by in range(0, block_height):
                 for bx in range(0, block_width, 2):
-                    byte = tim_pixel_data[offset]
-                    a = byte & 0x03
-                    b = ((byte & 0x30) >> 4)
-                    c = ((byte >> 2) & 0x3)
-                    d = (((byte >> 2) & 0x30) >> 4)
-                    decoded_pixel_data_top[((y + by) * (img_width // 2)) + ((x + bx) // 2)] = (b * 16) + a
-                    decoded_pixel_data_bottom[((y + by) * (img_width // 2)) + ((x + bx) // 2)] = (d * 16) + c
+                    px = tim_pixel_data[offset]
+                    a = px & 0x03
+                    b = px & 0x30
+                    c = (px >> 2) & 0x03
+                    d = (px >> 2) & 0x30
+                    decoded_pixel_data_top[((y + by) * (img_width // 2)) + ((x + bx) // 2)] = b + a
+                    decoded_pixel_data_bottom[((y + by) * (img_width // 2)) + ((x + bx) // 2)] = d + c
                     offset += 1
 
     output_file = open(file_path.split(".")[0] + ".TIM", "wb")
@@ -56,4 +84,4 @@ def do_extract_font(file_path):
         bytearray(decoded_pixel_data_top) + bytearray(decoded_pixel_data_bottom)
     )
 
-    print("\nFound font. Extraction complete")
+    print("\nFound font. Extraction complete.")
