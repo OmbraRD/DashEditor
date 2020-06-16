@@ -111,8 +111,9 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
                     while os.path.exists(file_name_to_write):
                         file_name_to_write = "{}/{}_{}.{}".format(
                             full_path, inner_file_name_only, str(existing_file_counter), inner_file_name_extension)
+                        inner_folder_and_file = "{}_{}.{}".format(
+                            inner_folder_and_file.split(".")[0], str(existing_file_counter), inner_file_name_extension)
                         existing_file_counter += 1
-
                 inner_file = open(file_name_to_write, "wb")
 
                 print("Extracting {} to folder {}".format(inner_file_name, os.path.dirname(file_name_to_write)))
@@ -134,12 +135,13 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
                 offset = offset + padding
 
     if len(occurrences) == loop_counter:
-        print("\nThe amount of extracted files matches the occurrences.")
+        print("\nThe amount of extracted files matches the occurrences.\n")
     else:
-        print("\nSome files where not extracted successfully.")
+        print("\nSome files where not extracted successfully.\n")
 
 
 def do_pack_bin(full_file_or_folder_name, index_file_data):
+
     # Initialize the needed variables
     index_file_item: int = 0
 
