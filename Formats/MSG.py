@@ -3,7 +3,7 @@
 import re
 import os
 
-from Formats.BIN import bytes_to_uint, uint_to_bytes
+from Formats.BIN import bytes_to_uint, uint_to_bytes, ulong_to_bytes
 
 header = 2048  # 0x800
 
@@ -284,6 +284,12 @@ def do_insert_msg(original_msg, text_file):
 
     # Get offset after writing pointer table and encoded text
     current_offset = msg_file.tell()
+
+    # Write the new file size to the header
+    msg_file.seek(4)
+    msg_file.write(ulong_to_bytes(current_offset - header))
+    msg_file.seek(current_offset)
+
     # Get size of file and go back to current offset
     msg_file_size = msg_file.seek(0, os.SEEK_END)
     msg_file.seek(current_offset)
