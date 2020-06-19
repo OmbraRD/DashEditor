@@ -241,7 +241,7 @@ def do_insert_msg(original_msg, text_file):
     print("Pointer table size is {} blocks ({} bytes)".format(ptr_tbl_size // 2, ptr_tbl_size))
 
     i = 0
-
+    current_block = 1
     encoded_block: list = []
 
     while i < len(text):
@@ -264,8 +264,10 @@ def do_insert_msg(original_msg, text_file):
             encoded_text_block = do_encode_text_block(text_block)
             encoded_block.append(encoded_text_block)
 
-            # Append the size of the encoded block to the pointer table
-            ptr_table.append(ptr_table[-1] + len(encoded_text_block))
+            if current_block != ptr_tbl_size // 2:
+                # Append the size of the encoded block to the pointer table
+                ptr_table.append(ptr_table[-1] + len(encoded_text_block))
+                current_block += 1
 
         i += 1
 
@@ -279,25 +281,31 @@ def do_insert_msg(original_msg, text_file):
     encoded_block_bytes = bytes([val for sublist in encoded_block for val in sublist])
     print("Encoded text data size is {} bytes".format(len(encoded_block_bytes)))
 
-    msg_file.seek(header)
-    msg_file.write(ptr_table_bytes + encoded_block_bytes)
-
-    # Get offset after writing pointer table and encoded text
-    current_offset = msg_file.tell()
-
-    # Write the new file size to the header
-    msg_file.seek(4)
-    msg_file.write(ulong_to_bytes(current_offset - header))
-    msg_file.seek(current_offset)
-
-    # Get size of file and go back to current offset
+    # Get size of file
     msg_file_size = msg_file.seek(0, os.SEEK_END)
-    msg_file.seek(current_offset)
+    # Get size of new file
+    new_file_size = header + len(ptr_table_bytes) + len(encoded_block_bytes)
 
-    # Fill the rest of the file with 00
-    while current_offset < msg_file_size:
-        msg_file.write(b'\x00')
-        current_offset += 1
+    # Check if the new size is within the limits. Else throw and exception
+    if new_file_size > msg_file_size:
+        print("ERROR: New MSG file is {} bytes. Size limit is {} bytes.".format(new_file_size, msg_file_size))
+        exit()
+    else:
+        # Write new data to the MSG file
+        msg_file.seek(header)
+        msg_file.write(ptr_table_bytes + encoded_block_bytes)
+        # Get offset after writing pointer table and encoded text
+        current_offset = msg_file.tell()
+        # Write the new file size to the header
+        msg_file.seek(4)
+        msg_file.write(ulong_to_bytes(current_offset - header))
+        msg_file.seek(current_offset)
+        msg_file.seek(current_offset)
+
+        # Fill the rest of the file with 00
+        while current_offset < msg_file_size:
+            msg_file.write(b'\x00')
+            current_offset += 1
 
     msg_file.close()
 
