@@ -2,23 +2,23 @@
 
 import sys
 from Formats.BIN import *
-from Formats.MSG import do_decode_msg
+from Formats.MSG import do_extract_msg, do_insert_msg
 from Formats.TIM import do_extract_tim, do_insert_tim
 from Formats.FONT import do_extract_font, do_insert_font
 
 help_msg = (
-    """\nDashEditor v0.7 - Mega Man Legends Translation Toolkit
+    """\nDashEditor v0.9 - Mega Man Legends Translation Toolkit
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n
-  -e       unpacks the content of BIN files.
-  -c       packs a folder to BIN files.\n""")
+  -e   extracts che content of BIN file.
+  -i   inserts an extracted folder to BIN file.\n""")
 
 # Check if 2 arguments are passed
 if len(sys.argv) != 3:
     print("{}\nOne or more arguments missing or too many".format(help_msg))
 # If they are, check if the command argument is valid
-elif not any(cmd in sys.argv[1] for cmd in ("-e", "-c")):
+elif not any(cmd in sys.argv[1] for cmd in ("-e", "-i")):
     print("{}\nInvalid command!".format(help_msg))
 # If the command argument is valid, check if file exists and open it
 elif not os.path.exists(sys.argv[2]):
@@ -26,7 +26,7 @@ elif not os.path.exists(sys.argv[2]):
 # If second argument is -e and third argument is file
 elif sys.argv[1] == "-e" and not os.path.isfile(sys.argv[2]):
     print("\nExpected file. Provided folder")
-elif sys.argv[1] == "-c" and not os.path.isdir(sys.argv[2]):
+elif sys.argv[1] == "-i" and not os.path.isdir(sys.argv[2]):
     print("\nExpected folder. Provided file")
 else:
     # Ex: TEST/TEST2/FILE.BIN or TEST/TEST2
@@ -68,16 +68,16 @@ else:
             while index_file_line < len(index_file_content):
                 file_name = index_file_content[index_file_line].split(",")[0]
                 file_path = index_file_path.replace(os.path.basename(index_file_path), "") + file_name
-                # If MSG files are found, dump them
+                # If MSG files are found, extract them
                 if any(fn in index_file_content[index_file_line].upper() for fn in [".MSG"]):
-                    do_decode_msg(file_path)
+                    do_extract_msg(file_path)
                     index_file_content = index_file_content.pop(0)
                     index_file_line += 1
-                # If TIM files are found, convert them
+                # If TIM files are found, extract them
                 elif any(fn in index_file_content[index_file_line].upper() for fn in [".TIM"]):
                     do_extract_tim(file_path)
                     index_file_line += 1
-                # If FONT files are found, convert them
+                # If FONT files are found, extract them
                 elif any(fn in index_file_content[index_file_line].upper() for fn in ("FONT.DAT", "KAIFONT.DAT")):
                     do_extract_font(file_path)
                     index_file_line += 1
@@ -87,8 +87,8 @@ else:
             # Close the index file and return
             index_file.close()
 
-    # If argument is -c, pack BIN files
-    elif sys.argv[1] == "-c" and os.path.isdir(sys.argv[2]):
+    # If argument is -i, pack BIN files
+    elif sys.argv[1] == "-i" and os.path.isdir(sys.argv[2]):
 
         if not os.path.exists(index_file_path):
             print("\nIndex file missing")
@@ -102,13 +102,22 @@ else:
             while index_file_line < len(index_file_content):
                 file_name = index_file_content[index_file_line].split(",")[0].upper()
 
-                if any(fn in index_file_content[index_file_line].upper() for fn in [".TIM"]):
+                # If any MSG file is found. Insert TXT into MSG
+                if any(fn in index_file_content[index_file_line].upper() for fn in [".MSG"]):
+                    original_msg = (index_file_path.replace(os.path.basename(index_file_path), "") + file_name)
+                    text_file = (index_file_path.replace(os.path.basename(index_file_path), "") + file_name + ".txt")
+                    if os.path.exists(original_msg) and os.path.exists(text_file):
+                        do_insert_msg(original_msg, text_file)
+                    index_file_line += 1
+                # If any TIM file is found. Insert TIM into original TIM
+                elif any(fn in index_file_content[index_file_line].upper() for fn in [".TIM"]):
                     original_tim = (index_file_path.replace(os.path.basename(index_file_path), "") + file_name)
                     edited_tim = (index_file_path.replace(os.path.basename(index_file_path), "")
                                   + file_name.replace(".TIM", "_EXT.TIM"))
                     if os.path.exists(original_tim) and os.path.exists(edited_tim):
                         do_insert_tim(original_tim, edited_tim)
                     index_file_line += 1
+                # If FONT file is found. Insert FONT into original FONT
                 elif any(fn in index_file_content[index_file_line].upper() for fn in ("FONT.DAT", "KAIFONT.DAT")):
                     original_font = (index_file_path.replace(os.path.basename(index_file_path), "") + file_name)
                     edited_font = (index_file_path.replace(os.path.basename(index_file_path), "")
@@ -116,6 +125,7 @@ else:
                     if os.path.exists(original_font) and os.path.exists(edited_font):
                         do_insert_font(original_font, edited_font)
                     index_file_line += 1
+                # Else insert as is
                 else:
                     index_file_line += 1
 

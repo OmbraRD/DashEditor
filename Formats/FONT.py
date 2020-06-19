@@ -43,19 +43,20 @@ def do_extract_font(file_path):
     # Open FONT file
     font_file = open(file_path, "rb").read()
 
+    # Create Header of TIM
     tim_tag = b'\x10\x00\x00\x00'
     tim_bpp = b'\x08\x00\x00\x00'
     tim_clut_size = b'\x2c\x00\x00\x00'
-    tim_fb_pal_x = b'\x00\x00'  # Not known
-    tim_fb_pal_y = b'\x00\x00'  # Not known
+    tim_fb_pal_x = b'\x00\x00'  # Not known but needed
+    tim_fb_pal_y = b'\x00\x00'  # Not known but needed
     tim_colors = b'\x10\x00'
     tim_clut_num = b'\x01\x00'
     # Palette = #000, #FFF, #BBB, #888
     clut = b'\x00\x00\xFF\xFF\xF7\xDE\xEF\xBD\x00\x00\x00\x00\x00\x00\x00\x00' \
            b'\x00\x00\xFF\xFF\xF7\xDE\xEF\xBD\x00\x00\x00\x00\x00\x00\x00\x00'
     tim_img_size = ulong_to_bytes((img_width // 4) * img_height * 2 + 12)
-    tim_fb_img_x = b'\x00\x00'  # Not known
-    tim_fb_img_y = b'\x00\x00'  # Not known
+    tim_fb_img_x = b'\x00\x00'  # Not known but needed
+    tim_fb_img_y = b'\x00\x00'  # Not known but needed
     tim_width = b'\x40\x00'
     tim_height = b'\x00\x02'
     tim_pixel_data = font_file[2048:]
