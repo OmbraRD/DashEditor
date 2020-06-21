@@ -10,32 +10,29 @@ header = 2048  # 0x800
 char_table = {
     # FONT TABLE
     # Numbers
-    0x00: '0', 0x01: '1', 0x02: '2', 0x03: '3', 0x04: '4', 0x05: '5', 0x06: '6',
-    0x07: '7', 0x08: '8', 0x09: '9',
+    0x00: '0', 0x01: '1', 0x02: '2', 0x03: '3', 0x04: '4', 0x05: '5', 0x06: '6', 0x07: '7', 0x08: '8', 0x09: '9',
     # Symbols
-    0x0A: 'ç', 0x0B: 'ß', 0x0C: '\'', 0x0D: '!', 0x0E: '?',
-    0x0F: '<LCORNER>', 0x10: '<DOT>', 0x11: '(', 0x12: ')', 0x13: ':',
+    0x0A: 'ç', 0x0B: 'ß', 0x0C: '\'', 0x0D: '!', 0x0E: '?', 0x0F: '<LCORNER>', 0x10: '<DOT>', 0x11: '(', 0x12: ')',
+    0x13: ':',
     # Letters
-    0x15: 'A', 0x16: 'B', 0x17: 'C', 0x18: 'D', 0x19: 'E', 0x1A: 'F', 0x1B: 'G', 0x1C: 'H',
-    0x1D: 'I', 0x1E: 'J', 0x1F: 'K', 0x20: 'L', 0x21: 'M', 0x22: 'N', 0x23: 'O', 0x24: 'P',
-    0x25: 'Q', 0x26: 'R', 0x27: 'S', 0x28: 'T', 0x2A: 'U', 0x2B: 'V', 0x2C: 'W', 0x2D: 'X',
-    0x2E: 'Y', 0x2F: 'Z', 0x30: 'a', 0x31: 'b', 0x32: 'c', 0x33: 'd', 0x34: 'e', 0x35: 'f',
-    0x36: 'g', 0x37: 'h', 0x38: 'i', 0x39: 'j', 0x3A: 'k', 0x3B: 'l', 0x3C: 'm', 0x3D: 'n',
-    0x3F: 'o', 0x40: 'p', 0x41: 'q', 0x42: 'r', 0x43: 's', 0x44: 't', 0x45: 'u', 0x46: 'v',
-    0x47: 'w', 0x48: 'x', 0x49: 'y', 0x4A: 'z',
+    0x15: 'A', 0x16: 'B', 0x17: 'C', 0x18: 'D', 0x19: 'E', 0x1A: 'F', 0x1B: 'G', 0x1C: 'H', 0x1D: 'I', 0x1E: 'J',
+    0x1F: 'K', 0x20: 'L', 0x21: 'M', 0x22: 'N', 0x23: 'O', 0x24: 'P', 0x25: 'Q', 0x26: 'R', 0x27: 'S', 0x28: 'T',
+    0x2A: 'U', 0x2B: 'V', 0x2C: 'W', 0x2D: 'X', 0x2E: 'Y', 0x2F: 'Z', 0x30: 'a', 0x31: 'b', 0x32: 'c', 0x33: 'd',
+    0x34: 'e', 0x35: 'f', 0x36: 'g', 0x37: 'h', 0x38: 'i', 0x39: 'j', 0x3A: 'k', 0x3B: 'l', 0x3C: 'm', 0x3D: 'n',
+    0x3F: 'o', 0x40: 'p', 0x41: 'q', 0x42: 'r', 0x43: 's', 0x44: 't', 0x45: 'u', 0x46: 'v', 0x47: 'w', 0x48: 'x',
+    0x49: 'y', 0x4A: 'z',
     # Symbols
-    0x4B: '&', 0x4C: '<ZAIRE>', 0x4D: '<YEN>', 0x4E: '/', 0x4F: ' ', 0x50: '<RCORNER>', 0x51: '~',
-    0x52: '-',
+    0x4B: '&', 0x4C: '<ZAIRE>', 0x4D: '<YEN>', 0x4E: '/', 0x4F: ' ', 0x50: '<RCORNER>', 0x51: '~', 0x52: '-',
     # Buttons
-    0x54: '<CIRCLE>', 0x55: '<TRIANGLE>', 0x56: '<CROSS>', 0x57: '<SQUARE>',
-    0x58: '<L1>', 0x59: '<L2>', 0x5A: '<R1>', 0x5B: '<R2>',
-    # Other Symbols
-    0x5C: ',', 0x5D: '\\', 0x5E: '.', 0x5F: '<...>', 0x60: '<HAND>', 0x61: '+', 0x62: '%',
+    0x54: '<CIRCLE>', 0x55: '<TRIANGLE>', 0x56: '<CROSS>', 0x57: '<SQUARE>', 0x58: '<L1>', 0x59: '<L2>', 0x5A: '<R1>',
+    0x5B: '<R2>',
+    # Symbols
+    0x5C: ',', 0x5D: '"', 0x5E: '.', 0x5F: '<...>', 0x60: '<HAND>', 0x61: '+', 0x62: '%',
     # Letters with accents
-    0x63: 'Ä', 0x64: 'À', 0x65: 'Â', 0x66: 'È', 0x67: 'Ê', 0x69: 'É', 0x6A: 'Ï', 0x6B: 'Ì',
-    0x6C: 'Ö', 0x6D: 'Ô', 0x6E: 'Ü', 0x6F: 'Ù', 0x70: 'Û', 0x71: 'Ç', 0x72: 'ä',
-    0x73: 'à', 0x74: 'â', 0x75: 'è', 0x76: 'ê', 0x77: 'é', 0x78: 'ï', 0x79: 'î',
-    0x7A: 'ö', 0x7B: 'ô', 0x7C: 'ü', 0x7E: 'ù', 0x7F: 'û',
+    0x63: 'Ä', 0x64: 'À', 0x65: 'Â', 0x66: 'È', 0x67: 'Ê', 0x69: 'É', 0x6A: 'Ï', 0x6B: 'Ì', 0x6C: 'Ö', 0x6D: 'Ô',
+    0x6E: 'Ü', 0x6F: 'Ù', 0x70: 'Û', 0x71: 'Ç', 0x72: 'ä', 0x73: 'à', 0x74: 'â', 0x75: 'è', 0x76: 'ê', 0x77: 'é',
+    0x78: 'ï', 0x79: 'î', 0x7A: 'ö', 0x7B: 'ô', 0x7C: 'ü', 0x7E: 'ù', 0x7F: 'û',
+    # Symbols
     0x80: '<ALPHA>', 0x81: '<OMEGA>', 0x82: ';', 0x83: '=',
     # NOT IN TABLE
     0x86: '\n'
@@ -79,40 +76,14 @@ def do_encode_text_block(text_block):
         if "<{}>".format(tag) in inverse_char_table:
             output.append(inverse_char_table["<{}>".format(tag)])
 
-        elif tag.startswith('PAUSE'):
-            output.append(0x8B)
+        elif tag.startswith('AUTO_CLOSE'):
+            output.append(0x84)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
-        elif tag.startswith('UNK1') and tag.endswith('FF'):
-            output.append(0x8A)
-            for arg in tag_args(tag, typ="S"):
-                output.append(int(arg[ai:], 16))
-            bi += 1  # Account for the extra \n
-
-        elif tag.startswith('UNK2'):
-            output.append(0x8A)
-            for arg in tag_args(tag, typ="S"):
-                output.append(int(arg[ai:], 16))
-
-        elif tag.startswith('MENU'):
-            output.append(0x8C)
-            for arg in tag_args(tag, typ="M"):
-                if len(arg) == 4:
-                    args = arg[ai:ai + 4]
-                    output.extend((int(args, 16) & 0xFF, int(args, 16) >> 8))
-                elif len(arg) == 2:
-                    output.append(int(arg[ai:], 16))
-            bi += 1  # Account for the extra \n
-
-        elif tag.startswith('UNK3'):
-            output.append(0x8E)
-            for arg in tag_args(tag, typ="S"):
-                output.append(int(arg[ai:], 16))
-
-        elif tag.startswith('AUDIO'):
-            output.append(0x8F)
+        elif tag.startswith('AUTO_LINE'):
+            output.append(0x87)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
@@ -121,76 +92,93 @@ def do_encode_text_block(text_block):
             output.append(0x89)
             output.append(int(tag_args(tag, typ="S")[0], 16))
 
-        elif tag.startswith('UNK4'):
-            output.append(0x93)
-            for arg in tag_args(tag, typ="S"):
+        elif tag.startswith('UNK_8A'):
+            output.append(0x8A)
+            for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('PAUSE'):
+            output.append(0x8B)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('WIN'):
+            output.append(0x8C)
+            for arg in tag_args(tag, typ="M"):
+                if len(arg) == 4:
+                    output.extend((int(arg, 16) & 0xFF, int(arg, 16) >> 8))
+                elif len(arg) == 2:
+                    output.append(int(arg[ai:], 16))
+            bi += 1  # Account for the extra \n
+
+        elif tag.startswith('UNK_8D'):
+            output.append(0x8D)
+            output.append(int(tag_args(tag, typ="S")[0], 16))
+
+        elif tag.startswith('UNK_8E'):
+            output.append(0x8E)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('AUDIO'):
+            output.append(0x8F)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+            bi += 1  # Account for the extra \n
+
+        elif tag.startswith('DECOR'):
+            output.append(0x93)
+            for arg in tag_args(tag, typ="M"):
+                output.append(int(arg[ai:], 16))
+            bi += 1  # Account for the extra \n
+
+        elif tag.startswith('MOVE_FREE'):
+            output.append(0x94)
 
         elif tag.startswith('SEL'):
             output.append(0x96)
             for arg in tag_args(tag, typ="S"):
                 output.append(int(arg[ai:], 16))
 
+        elif tag.startswith('UNK_97'):
+            output.append(0x97)
+            output.append(int(tag_args(tag, typ="S")[0], 16))
+
         elif tag.startswith('JMP'):
             output.append(0x99)
-            for arg in tag_args(tag, typ="S"):
+            for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('UNK5'):
+        elif tag.startswith('GET'):
             output.append(0x9A)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('UNK6'):
+        elif tag.startswith('GIVE'):
             output.append(0x9B)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('MSG_ID'):
+        elif tag.startswith('MSG'):
             output.append(0x9C)
-            for arg in reversed(tag_args(tag, typ="S")):
-                output.append(int(arg[ai:], 16))
-
-        elif tag.startswith('WIN_SUB'):
-            output.append(0x9F)
-            for arg in reversed(tag_args(tag, typ="S")):
-                output.append(int(arg[ai:], 16))
+            for arg in tag_args(tag, typ="M"):
+                output.extend((int(arg, 16) & 0xFF, int(arg, 16) >> 8))
             bi += 1  # Account for the extra \n
+
+        elif tag.startswith('NEXT'):
+            output.append(0x9F)
+            bi += 2  # Account for the extra \n\n
 
         elif tag.startswith('PAD'):
             output.append(0xA0)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('WIN_MAIN_1 T=8C'):
+        elif tag.startswith('AUTO'):
             output.append(0xA1)
-            for arg in tag_args(tag, typ="M"):
-                if len(arg) == 4:
-                    args = arg[ai:ai + 4]
-                    output.extend((int(args, 16) & 0xFF, int(args, 16) >> 8))
-                elif len(arg) == 2:
-                    output.append(int(arg[ai:], 16))
-            bi += 1  # Account for the extra \n
 
-        elif tag.startswith('WIN_MAIN_1 T=94'):
-            output.append(0xA1)
-            for arg in tag_args(tag, typ="M"):
-                if len(arg) == 4:
-                    args = arg[ai:ai + 4]
-                    output.extend((int(args, 16) & 0xFF, int(args, 16) >> 8))
-                elif len(arg) == 2:
-                    output.append(int(arg[ai:], 16))
-            bi += 1  # Account for the extra \n
-
-        elif tag.startswith('WIN_MAIN_2'):
+        elif tag.startswith('MANUAL'):
             output.append(0xA2)
-            for arg in tag_args(tag, typ="M"):
-                if len(arg) == 4:
-                    args = arg[ai:ai + 4]
-                    output.extend((int(args, 16) & 0xFF, int(args, 16) >> 8))
-                elif len(arg) == 2:
-                    output.append(int(arg[ai:], 16))
-            bi += 1  # Account for the extra \n
 
         elif tag.startswith('WAIT'):
             output.append(0xA4)
@@ -198,21 +186,82 @@ def do_encode_text_block(text_block):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
-        elif tag.startswith('CLOSE'):
-            output.append(0xA9)
+        elif tag.startswith('UNK_A6'):
+            output.append(0xA6)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+            bi += 1  # Account for the extra \n
+
+        elif tag.startswith('UNK_AC'):
+            output.append(0xAC)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('PRICE_ZAIRE'):
-            output.extend((0xBA, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F))
+        elif tag.startswith('OPTION'):
+            output.append(0xAE)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_AD'):
+            output.append(0xAD)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_AF'):
+            output.append(0xAF)
+            output.append(int(tag_args(tag, typ="S")[0], 16))
+            bi += 1  # Account for the extra \n
+
+        elif tag.startswith('RESTORE_HP'):
+            output.append(0xB2)
+
+        elif tag.startswith('RESTORE_SP'):
+            output.append(0xB3)
+
+        elif tag.startswith('RESTORE_SHIELD'):
+            output.append(0xB4)
+
+        elif tag.startswith('UNK_B9'):
+            output.append(0xB9)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('COST'):
+            output.append(0xBA)
+
+        elif tag.startswith('UNK_BF'):
+            output.append(0xBF)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('ZENNY_AMOUNT'):
+            output.append(0xC8)
 
         elif tag.startswith('ITEM'):
             output.append(0xD0)
+            output.append(int(tag_args(tag, typ="S")[0], 16))
+
+        elif tag.startswith('UNK_D1'):
+            output.append(0xD1)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
         elif tag.startswith('PRICE_ZENNY'):
-            output.extend((0xD3, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F))
+            output.append(0xD3)
+
+        elif tag.startswith('UNK_D4'):
+            output.append(0xD4)
+            output.append(int(tag_args(tag, typ="S")[0], 16))
+
+        elif tag.startswith('UNK_D6'):
+            output.append(0xD6)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_DB'):
+            output.append(0xDB)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
 
         else:
             output.append(int(tag, 16))
@@ -321,100 +370,162 @@ def do_decode_block(block_data):
         b5 = block_data[i + 4] if i + 4 < len(block_data) else None
         b6 = block_data[i + 5] if i + 5 < len(block_data) else None
         b7 = block_data[i + 6] if i + 6 < len(block_data) else None
-        b8 = block_data[i + 7] if i + 7 < len(block_data) else None
-        b9 = block_data[i + 8] if i + 8 < len(block_data) else None
-        b10 = block_data[i + 9] if i + 9 < len(block_data) else None
-        b11 = block_data[i + 10] if i + 10 < len(block_data) else None
-        b12 = block_data[i + 11] if i + 11 < len(block_data) else None
-        b13 = block_data[i + 12] if i + 12 < len(block_data) else None
 
         try:
             decoded_block += char_table[b1]
         except KeyError:
-            if b1 == 0x8B:  # TODO: Verify in game
-                decoded_block += '<PAUSE {:02X}{:02X}>\n'.format(b3, b2)
+
+            if b1 == 0x84:
+                decoded_block += '<AUTO_CLOSE {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
-            elif (b1, b7) == (0x8A, 0xFF):  # TODO: Verify in game
-                decoded_block += \
-                    '<UNK1 {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}>\n'.format(b2, b3, b4, b5, b6, b7)
-                i += 6
+
+            elif b1 == 0x87:
+                decoded_block += '<AUTO_LINE {:02X}{:02X}>\n'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0x89:  # 00 = White, 01 = Green?, 02 = Red, 04 = Blue, 05 = Purple
+                decoded_block += '<COLOR {:02X}>'.format(b2)
+                i += 1
+
             elif b1 == 0x8A:  # TODO: Verify in game
-                decoded_block += '<UNK2 {:02X}{:02X}>'.format(b2, b3)
+                decoded_block += '<UNK_8A {:02X}{:02X}>'.format(b3, b2)
                 i += 2
-            elif b1 == 0x8C:  # TODO: Verify in game
+
+            elif b1 == 0x8B:
+                decoded_block += '<PAUSE {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0x8C:
                 decoded_block += \
-                    '<MENU PX={:02X}{:02X} PY={:02X}{:02X} SX={:02X} SY={:02X}' \
-                    ' ?={:02X} WAT={:02X} BORDER={:02X}>' \
-                    '\n'.format(b3, b2, b5, b4, b6, b7, b8, b9, b10)
-                i += 9
+                    '<WIN PX={:02X}{:02X} PY={:02X}{:02X} SX={:02X} SY={:02X}>\n'.format(b3, b2, b5, b4, b6, b7)
+                i += 6
+
+            elif b1 == 0x8D:  # TODO: Verify in game
+                decoded_block += '<UNK_8D {:02X}>'.format(b2)
+                i += 1
+
             elif b1 == 0x8E:  # TODO: Verify in game
-                decoded_block += '<UNK3 {:02X}{:02X}>'.format(b2, b3)
+                decoded_block += '<UNK_8E {:02X}{:02X}>'.format(b3, b2)
                 i += 2
+
             elif b1 == 0x8F:
                 decoded_block += '<AUDIO {:02X}{:02X}{:02X}{:02X}>\n'.format(b5, b4, b3, b2)
                 i += 4
-            elif b1 == 0x89:  # 00 = White, 02 = Red, 04 = Blue, 05 = Purple
-                decoded_block += '<COLOR {:02X}>'.format(b2)
-                i += 1
-            elif b1 == 0x93:  # TODO: Verify in game
-                decoded_block += '<UNK4 {:02X}{:02X}>'.format(b2, b3)
+
+            elif b1 == 0x93:
+                decoded_block += '<DECOR WAT={:02X} BORDER={:02X}>\n'.format(b2, b3)
                 i += 2
-            elif b1 == 0x96:
-                decoded_block += '<SEL {:02X}{:02X}>'.format(b2, b3)
-                i += 2
-            elif b1 == 0x99:  # TODO: Verify in game
-                decoded_block += '<JMP {:02X}{:02X}>'.format(b2, b3)
-                i += 2
-            elif b1 == 0x9A:  # TODO: Verify in game
-                decoded_block += '<UNK5 {:02X}{:02X}>'.format(b3, b2)
-                i += 2
-            elif b1 == 0x9B:  # TODO: Verify in game
-                decoded_block += '<UNK6 {:02X}{:02X}>'.format(b3, b2)
-                i += 2
-            elif b1 == 0x9C:  # TODO: Verify in game
-                decoded_block += '<MSG_ID {:02X}{:02X}>'.format(b3, b2)
-                i += 2
-            elif b1 == 0x9F:
-                decoded_block += '<WIN_SUB {:02X}{:02X}{:02X}>\n'.format(b4, b3, b2)
+
+            elif b1 == 0x94:
+                decoded_block += '<MOVE_FREE>'
+
+            elif b1 == 0x96:  # Probably b2 and b3 are used for positioning. b4 no idea. Needs testing
+                decoded_block += '<SEL {:02X}{:02X}{:02X}>'.format(b2, b3, b4)
                 i += 3
+
+            elif b1 == 0x97:  # 1 extra byte per item in the list. FF closes win. Other byte jump to text?
+                decoded_block += '<UNK_97 {:02X}>'.format(b2)
+                i += 1
+
+            elif b1 == 0x99:  # TODO: Verify in game
+                decoded_block += '<JMP {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0x9A:
+                decoded_block += '<GET {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0x9B:  # Something item related
+                decoded_block += '<GIVE {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0x9C:  # TODO: Verify in game
+                decoded_block += '<MSG ID={:02X}{:02X} ?={:02X}{:02X}>\n'.format(b3, b2, b5, b4)
+                i += 4
+
+            elif b1 == 0x9F:
+                decoded_block += '<NEXT>\n\n'
+
             elif b1 == 0xA0:
                 decoded_block += '<PAD {:02X}{:02X}>'.format(b3, b2)
                 i += 2
-            elif (b1, b2) == (0xA1, 0x8C):
-                decoded_block += \
-                    '<WIN_MAIN_1 T={:02X} PX={:02X}{:02X} PY={:02X}{:02X} SX={:02X} SY={:02X}' \
-                    ' ?={:02X} WAT={:02X} BORDER={:02X}>' \
-                    '\n'.format(b2, b4, b3, b6, b5, b7, b8, b9, b10, b11)
-                i += 10
-            elif (b1, b2) == (0xA1, 0x94):
-                decoded_block += \
-                    '<WIN_MAIN_1 T={:2X} ?={:02X} PX={:02X}{:02X} PY={:02X}{:02X} SX={:02X} SY={:02X}' \
-                    ' ?={:02X} WAT={:02X} BORDER={:02X}>' \
-                    '\n'.format(b2, b3, b5, b4, b7, b6, b8, b9, b10, b11, b12)
-                i += 11
-            elif (b1, b2) == (0xA2, 0x94):
-                decoded_block += \
-                    '<WIN_MAIN_2 T={:2X} PX={:02X}{:02X} PY={:02X}{:02X} SX={:02X} SY={:02X}' \
-                    ' ?={:02X} WAT={:02X} BORDER={:02X}>' \
-                    '\n'.format(b2, b4, b3, b6, b5, b7, b8, b9, b10, b11)
-                i += 10
+
+            elif b1 == 0xA1:
+                decoded_block += '<AUTO>'
+
+            elif b1 == 0xA2:
+                decoded_block += '<MANUAL>'
+
             elif b1 == 0xA4:
                 decoded_block += '<WAIT {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
-            elif b1 == 0xA9:
-                decoded_block += '<CLOSE {:02X}{:02X}{:02X}{:02X}{:02X}>'.format(b6, b5, b4, b3, b2)
-                i += 5
-            elif (b1, b2, b3, b4, b5, b6, b7) == (
-                    0xBA, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F):  # TODO: Verify in game
-                decoded_block += '<PRICE_ZAIRE>'
+
+            elif b1 == 0xA6:  # TODO: Verify in game
+                decoded_block += '<UNK_A6 {:02X}{:02X}>\n'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0xAC:  # TODO: Verify in game
+                decoded_block += '<UNK_AC {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0xAE:
+                decoded_block += '<OPTION {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0xAD:  # Similar to 0x96 but apparently able to move the curson position with multiple options
+                decoded_block += '<UNK_AD {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}>'.format(b2, b3, b4, b5, b6, b7)
                 i += 6
-            elif b1 == 0xD0:  # TODO: Verify in game
-                decoded_block += '<ITEM {:02X}{:02X}{:02X}{:02X}>'.format(b5, b4, b3, b2)
-                i += 4
-            elif (b1, b2, b3, b4, b5, b6, b7) == (
-                    0xD3, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F, 0x4F):  # TODO: Verify in game
+
+            elif b1 == 0xAF:  # TODO: Verify in game
+                decoded_block += '<UNK_AF {:02X}>\n'.format(b2)
+                i += 1
+
+            elif b1 == 0xB2:
+                decoded_block += '<RESTORE_HP>'
+
+            elif b1 == 0xB3:
+                decoded_block += '<RESTORE_SP>'
+
+            elif b1 == 0xB4:
+                decoded_block += '<RESTORE_SHIELD>'
+
+            elif b1 == 0xB9:  # TODO: Verify in game
+                decoded_block += '<UNK_B9 {:02X}{:02X}{:02X}>'.format(b4, b3, b2)
+                i += 3
+
+            elif b1 == 0xBA:  # TODO: Verify in game
+                decoded_block += '<COST>'
+
+            elif b1 == 0xBF:  # TODO: Verify in game
+                decoded_block += '<UNK_BF {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0xC8:  # TODO: Verify in game
+                decoded_block += '<ZENNY_AMOUNT>'
+
+            elif b1 == 0xD0:
+                decoded_block += '<ITEM {:02X}>'.format(b2)
+                i += 1
+
+            elif b1 == 0xD1:  # Some kind of variable
+                decoded_block += '<UNK_D1 {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0xD3:  # TODO: Verify in game
                 decoded_block += '<PRICE_ZENNY>'
-                i += 6
+
+            elif b1 == 0xD4:  # Some kind of variable
+                decoded_block += '<UNK_D4 {:02X}>'.format(b2)
+                i += 1
+
+            elif b1 == 0xD6:  # TODO: Verify in game
+                decoded_block += '<UNK_D6 {:02X}{:02X}>'.format(b3, b2)
+                i += 2
+
+            elif b1 == 0xDB:  # TODO: Verify in game
+                decoded_block += '<UNK_DB {:02X}{:02X}{:02X}{:02X}>'.format(b2, b3, b4, b5)
+                i += 4
+
             else:
                 decoded_block += '<{:02X}>'.format(b1)
         i += 1
@@ -451,7 +562,7 @@ def do_extract_msg(file_path):
 
         # Write each block with offset information
         output_file.write(
-            "[Block {}, String: {:04X}-{:04X}]\n".format(block_number, block_start_offset, block_end_offset)
+            "[Block {:02X}, String: {:04X}-{:04X}]\n".format(block_number, block_start_offset, block_end_offset)
         )
 
         output_file.write(do_decode_block(block_data) + "\n\n")

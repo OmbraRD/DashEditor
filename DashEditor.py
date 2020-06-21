@@ -2,9 +2,10 @@
 
 import sys
 from Formats.BIN import *
-from Formats.MSG import do_extract_msg, do_insert_msg
-from Formats.TIM import do_extract_tim, do_insert_tim
 from Formats.FONT import do_extract_font, do_insert_font
+from Formats.MSG import do_extract_msg, do_decode_block, do_insert_msg
+from Formats.TIM import do_extract_tim, do_insert_tim
+
 
 help_msg = (
     """\nDashEditor v0.9 - Mega Man Legends Translation Toolkit
@@ -29,7 +30,8 @@ elif sys.argv[1] == "-e" and not os.path.isfile(sys.argv[2]):
 elif sys.argv[1] == "-i" and not os.path.isdir(sys.argv[2]):
     print("\nExpected folder. Provided file")
 else:
-    # Ex: TEST/TEST2/FILE.BIN or TEST/TEST2
+    # Replace \ with / since Windows is compatible but not Linux or Mac
+    # Ex: TEST\TEST2\FILE.BIN or TEST\TEST2 == TEST/TEST2/FILE.BIN or TEST/TEST2
     full_file_or_folder_name: str = sys.argv[2].replace("\\", "/")
     # Get only the paths from the normalized path
     # Ex: TEST/TEST2/FILE.BIN == TEST/TEST2/FILE
@@ -37,7 +39,6 @@ else:
     # Get only the file name from the normalized path
     # Ex: TEST/TEST2/FILE.BIN == FILE.BIN
     file_name_only = os.path.basename(full_file_or_folder_name)
-
     # Full path to the index file
     # Ex: TEST/TEST2/TEST2.BIN == TEST/TEST2/TEST2.txt
     index_file_path = "{}/{}.txt".format(full_path_and_file_no_ext, file_name_only.replace(".BIN", ""))
@@ -45,47 +46,91 @@ else:
     if sys.argv[1] == "-e" and os.path.isfile(sys.argv[2]):
         file_data = open(full_file_or_folder_name, "rb").read()
 
-        # Check if the file is a valid MML BIN file
-        try:
-            assert file_data[64:67].decode() == "..\\"
-        except AssertionError:
-            print("\nNot a valid MML PSX BIN file")
+        if file_name_only == "ROCK_NEO.EXE":
+            try:
+                assert file_data[559296:559313].decode() == "BASLUS-00603-DASH"
+            except AssertionError:
+                print("\nNot a valid NTSC MML PSX EXE file")
+            else:
+                print("\nExtracting text block from {}".format(sys.argv[2].replace("\\", "/").split("/")[-1]))
+
+                # Read pointer table data
+                ptr_tbl_data = file_data[512716:513684]
+                # Pointer table size
+                ptr_tbl_size = len(ptr_tbl_data) // 4
+
+                print("Pointer table contains {} blocks".format(ptr_tbl_size))
+
+                output_file = open(full_path_and_file_no_ext + ".txt", "w")
+
+                ptr_tbl_ofs = 0
+                block_number = 1
+
+                while ptr_tbl_ofs < len(ptr_tbl_data):
+                    # Extract block data by subtracting 0x8000F800 since these are PSX memory offsets
+                    block_start_ofs = bytes_to_uint(ptr_tbl_data[ptr_tbl_ofs:ptr_tbl_ofs + 4]) - 2147547136
+                    # If we reached the last pointer, use the end of the block as end offset
+                    if ptr_tbl_ofs == len(ptr_tbl_data) - 4:
+                        block_end_ofs = 512716
+                    else:
+                        block_end_ofs = bytes_to_uint(ptr_tbl_data[ptr_tbl_ofs + 4:ptr_tbl_ofs + 8]) - 2147547136
+
+                    block_data = file_data[block_start_ofs:block_end_ofs]
+
+                    # Write each block with offset information
+                    output_file.write(
+                        "[Block {}, String: {:04X}-{:04X}]\n".format(block_number, block_start_ofs, block_end_ofs)
+                    )
+
+                    output_file.write(do_decode_block(block_data) + "\n\n")
+
+                    ptr_tbl_ofs += 4
+                    block_number += 1
+
+                output_file.close()
+
         else:
+            # Check if the file is a valid MML BIN file
+            try:
+                assert file_data[64:67].decode() == "..\\"
+            except AssertionError:
+                print("\nNot a valid MML PSX BIN file")
+            else:
 
-            # Create index file
-            if not os.path.exists(full_path_and_file_no_ext):
-                os.mkdir(full_path_and_file_no_ext)
+                # Create index file
+                if not os.path.exists(full_path_and_file_no_ext):
+                    os.mkdir(full_path_and_file_no_ext)
 
-            index_file = open(index_file_path, "w+")
+                index_file = open(index_file_path, "w+")
 
-            # Proceed with extraction
-            do_unpack_bin(full_path_and_file_no_ext, file_data, index_file)
+                # Proceed with extraction
+                do_unpack_bin(full_path_and_file_no_ext, file_data, index_file)
 
-            index_file.seek(0)
-            index_file_content = index_file.read().splitlines()
-            index_file_line = 0
+                index_file.seek(0)
+                index_file_content = index_file.read().splitlines()
+                index_file_line = 0
 
-            while index_file_line < len(index_file_content):
-                file_name = index_file_content[index_file_line].split(",")[0]
-                file_path = index_file_path.replace(os.path.basename(index_file_path), "") + file_name
-                # If MSG files are found, extract them
-                if any(fn in index_file_content[index_file_line].upper() for fn in [".MSG"]):
-                    do_extract_msg(file_path)
-                    index_file_content = index_file_content.pop(0)
-                    index_file_line += 1
-                # If TIM files are found, extract them
-                elif any(fn in index_file_content[index_file_line].upper() for fn in [".TIM"]):
-                    do_extract_tim(file_path)
-                    index_file_line += 1
-                # If FONT files are found, extract them
-                elif any(fn in index_file_content[index_file_line].upper() for fn in ("FONT.DAT", "KAIFONT.DAT")):
-                    do_extract_font(file_path)
-                    index_file_line += 1
-                else:
-                    index_file_line += 1
+                while index_file_line < len(index_file_content):
+                    file_name = index_file_content[index_file_line].split(",")[0]
+                    file_path = index_file_path.replace(os.path.basename(index_file_path), "") + file_name
+                    # If MSG files are found, extract them
+                    if any(fn in index_file_content[index_file_line].upper() for fn in [".MSG"]):
+                        do_extract_msg(file_path)
+                        index_file_content = index_file_content.pop(0)
+                        index_file_line += 1
+                    # If TIM files are found, extract them
+                    elif any(fn in index_file_content[index_file_line].upper() for fn in [".TIM"]):
+                        do_extract_tim(file_path)
+                        index_file_line += 1
+                    # If FONT files are found, extract them
+                    elif any(fn in index_file_content[index_file_line].upper() for fn in ("FONT.DAT", "KAIFONT.DAT")):
+                        do_extract_font(file_path)
+                        index_file_line += 1
+                    else:
+                        index_file_line += 1
 
-            # Close the index file and return
-            index_file.close()
+                # Close the index file and return
+                index_file.close()
 
     # If argument is -i, pack BIN files
     elif sys.argv[1] == "-i" and os.path.isdir(sys.argv[2]):
