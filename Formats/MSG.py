@@ -76,13 +76,13 @@ def do_encode_text_block(text_block):
         if "<{}>".format(tag) in inverse_char_table:
             output.append(inverse_char_table["<{}>".format(tag)])
 
-        elif tag.startswith('AUTO_CLOSE'):
+        elif tag.startswith('CLOSE'):
             output.append(0x84)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
-        elif tag.startswith('AUTO_CLEAR'):
+        elif tag.startswith('CLEAR'):
             output.append(0x87)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
@@ -160,10 +160,10 @@ def do_encode_text_block(text_block):
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('MSG'):
+        elif tag.startswith('MSG_CHECK'):
             output.append(0x9C)
-            for arg in tag_args(tag, typ="M"):
-                output.extend((int(arg, 16) & 0xFF, int(arg, 16) >> 8))
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
         elif tag.startswith('NEXT'):
@@ -187,11 +187,25 @@ def do_encode_text_block(text_block):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
+        elif tag.startswith('CAM'):
+            output.append(0xA5)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+            bi += 1  # Account for the extra \n
+
         elif tag.startswith('UNK_A6'):
             output.append(0xA6)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
+
+        elif tag.startswith('UNK_A7'):
+            output.append(0xA7)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('END'):
+            output.append(0xA9)
 
         elif tag.startswith('EXE_JUMP'):
             output.append(0xAC)
@@ -262,8 +276,33 @@ def do_encode_text_block(text_block):
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
+        elif tag.startswith('UNK_D7'):
+            output.append(0xD7)
+            for arg in reversed(tag_args(tag, typ="S")):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_DA'):
+            output.append(0xDA)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+
         elif tag.startswith('UNK_DB'):
             output.append(0xDB)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_DD'):
+            output.append(0xDD)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_E1'):
+            output.append(0xE1)
+            for arg in tag_args(tag, typ="S"):
+                output.append(int(arg[ai:], 16))
+
+        elif tag.startswith('UNK_E3'):
+            output.append(0xE3)
             for arg in tag_args(tag, typ="S"):
                 output.append(int(arg[ai:], 16))
 
@@ -377,17 +416,21 @@ def do_decode_block(block_data):
         b5 = block_data[i + 4] if i + 4 < len(block_data) else None
         b6 = block_data[i + 5] if i + 5 < len(block_data) else None
         b7 = block_data[i + 6] if i + 6 < len(block_data) else None
+        b8 = block_data[i + 7] if i + 7 < len(block_data) else None
+        b9 = block_data[i + 8] if i + 8 < len(block_data) else None
+        b10 = block_data[i + 9] if i + 9 < len(block_data) else None
+        b11 = block_data[i + 10] if i + 10 < len(block_data) else None
 
         try:
             decoded_block += char_table[b1]
         except KeyError:
 
             if b1 == 0x84:
-                decoded_block += '<AUTO_CLOSE {:02X}{:02X}>\n'.format(b3, b2)
+                decoded_block += '<CLOSE {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0x87:
-                decoded_block += '<AUTO_CLEAR {:02X}{:02X}>\n'.format(b3, b2)
+            elif b1 == 0x87:  # 0000 Closes the window. 0004 Clears the text.
+                decoded_block += '<CLEAR {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
 
             elif b1 == 0x89:  # 00 = White, 01 = Green?, 02 = Red, 04 = Blue, 05 = Purple
@@ -453,9 +496,9 @@ def do_decode_block(block_data):
                 decoded_block += '<GIVE {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0x9C:  # TODO: Verify in game. Probably completely wrong
-                decoded_block += '<MSG ID={:02X}{:02X} ?={:02X}{:02X}>\n'.format(b3, b2, b5, b4)
-                i += 4
+            elif b1 == 0x9C:  # TODO: Verify in game. Probably has to do with non repeatable dialogs
+                decoded_block += '<MSG_CHECK {:02X}{:02X}{:02X}>\n'.format(b4, b3, b2)
+                i += 3
 
             elif b1 == 0x9F:
                 decoded_block += '<NEXT>\n\n'
@@ -464,19 +507,32 @@ def do_decode_block(block_data):
                 decoded_block += '<PAD {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0xA1:
+            elif b1 == 0xA1:  # Window type? Not 100% sure
                 decoded_block += '<AUTO>'
 
-            elif b1 == 0xA2:
+            elif b1 == 0xA2:  # Window type? Not 100% sure
                 decoded_block += '<MANUAL>'
 
             elif b1 == 0xA4:
                 decoded_block += '<WAIT {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
 
+            elif b1 == 0xA5:  # TODO: Verify in game. Possible camera animation.
+                decoded_block += '<CAM {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}>' \
+                                 '\n'.format(b2, b3, b4, b5, b6, b7, b8, b9, b10, b11)
+                i += 10
+
             elif b1 == 0xA6:  # TODO: Verify in game
                 decoded_block += '<UNK_A6 {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
+
+            elif b1 == 0xA7:  # TODO: Verify in game. Possible camera animation.
+                decoded_block += '<UNK_A7 {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}>' \
+                                 ''.format(b2, b3, b4, b5, b6, b7, b8, b9)
+                i += 8
+
+            elif b1 == 0xA9:  # TODO: Verify in game
+                decoded_block += '<END>'
 
             elif b1 == 0xAC:  # Weird cases.
                 decoded_block += '<EXE_JUMP {:02X}{:02X}>'.format(b3, b2)
@@ -536,9 +592,29 @@ def do_decode_block(block_data):
                 decoded_block += '<UNK_D6 {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
+            elif b1 == 0xD7:  # TODO: Verify in game
+                decoded_block += '<UNK_D7 {:02X}{:02X}{:02X}{:02X}>'.format(b5, b4, b3, b2)
+                i += 4
+
+            elif b1 == 0xDA:  # TODO: Verify in game. Menu stuff. Some kind of inventory variable
+                decoded_block += '<UNK_DA {:02X}{:02X}>'.format(b2, b3)
+                i += 2
+
             elif b1 == 0xDB:  # TODO: Verify in game
                 decoded_block += '<UNK_DB {:02X}{:02X}{:02X}{:02X}>'.format(b2, b3, b4, b5)
                 i += 4
+
+            elif b1 == 0xDD:  # TODO: Verify in game
+                decoded_block += '<UNK_DD {:02X}{:02X}{:02X}{:02X}>'.format(b2, b3, b4, b5)
+                i += 4
+
+            elif b1 == 0xE1:  # TODO: Verify in game. Menu stuff. Some kind of inventory variable
+                decoded_block += '<UNK_E1 {:02X}{:02X}>'.format(b2, b3)
+                i += 2
+
+            elif b1 == 0xE3:  # TODO: Verify in game
+                decoded_block += '<UNK_E3 {:02X}{:02X}>'.format(b2, b3)
+                i += 2
 
             else:
                 decoded_block += '<{:02X}>'.format(b1)
