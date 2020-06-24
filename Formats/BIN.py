@@ -38,7 +38,7 @@ def do_unpack_bin(full_path_and_file_no_ext, f_data, index_file):
             # Check if if it starts with a ..\
             if f_data[offset + 64:offset + 128].startswith(b"..\\"):
 
-                # Get folders and filename and replace \ with / (Fix for Linux since os.path.norpath does not work)
+                # Get folders and filename and replace \ with / (Fix for Linux)
                 inner_folder_and_file: str = (
                     f_data[offset + 67:offset + 128].replace(b'\x00', b'').decode().replace("\\", "/"))
 

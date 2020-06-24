@@ -8,7 +8,7 @@ from Formats.TIM import do_extract_tim, do_insert_tim
 
 
 help_msg = (
-    """\nDashEditor v0.9 - Mega Man Legends Translation Toolkit
+    """\nDashEditor v0.9.5 - Mega Man Legends Translation Toolkit
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n
@@ -64,7 +64,7 @@ else:
                 output_file = open(full_path_and_file_no_ext + ".txt", "w")
 
                 ptr_tbl_ofs = 0
-                block_number = 1
+                block_number = 1  # Starting from one so it aligns with EXE_JUMP
 
                 while ptr_tbl_ofs < len(ptr_tbl_data):
                     # Extract block data by subtracting 0x8000F800 since these are PSX memory offsets
@@ -79,7 +79,7 @@ else:
 
                     # Write each block with offset information
                     output_file.write(
-                        "[Block {}, String: {:04X}-{:04X}]\n".format(block_number, block_start_ofs, block_end_ofs)
+                        "[Block {:02X}, String: {:04X}-{:04X}]\n".format(block_number, block_start_ofs, block_end_ofs)
                     )
 
                     output_file.write(do_decode_block(block_data) + "\n\n")

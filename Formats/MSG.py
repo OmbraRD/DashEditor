@@ -82,7 +82,7 @@ def do_encode_text_block(text_block):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
-        elif tag.startswith('AUTO_LINE'):
+        elif tag.startswith('AUTO_CLEAR'):
             output.append(0x87)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
@@ -137,16 +137,17 @@ def do_encode_text_block(text_block):
 
         elif tag.startswith('SEL'):
             output.append(0x96)
-            for arg in tag_args(tag, typ="S"):
+            for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('UNK_97'):
+        elif tag.startswith('MULTI'):
             output.append(0x97)
-            output.append(int(tag_args(tag, typ="S")[0], 16))
+            for arg in tag_args(tag, typ="M"):
+                output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('JMP'):
+        elif tag.startswith('CALL'):
             output.append(0x99)
-            for arg in reversed(tag_args(tag, typ="S")):
+            for arg in tag_args(tag, typ="S"):
                 output.append(int(arg[ai:], 16))
 
         elif tag.startswith('GET'):
@@ -192,7 +193,7 @@ def do_encode_text_block(text_block):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
-        elif tag.startswith('UNK_AC'):
+        elif tag.startswith('EXE_JUMP'):
             output.append(0xAC)
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
@@ -221,17 +222,20 @@ def do_encode_text_block(text_block):
         elif tag.startswith('RESTORE_SHIELD'):
             output.append(0xB4)
 
-        elif tag.startswith('UNK_B9'):
+        elif tag.startswith('IF'):
             output.append(0xB9)
-            for arg in reversed(tag_args(tag, typ="S")):
-                output.append(int(arg[ai:], 16))
+            for arg in tag_args(tag, typ="M"):
+                if len(arg) == 4:
+                    output.extend((int(arg, 16) & 0xFF, int(arg, 16) >> 8))
+                elif len(arg) == 2:
+                    output.append(int(arg[ai:], 16))
 
         elif tag.startswith('COST'):
             output.append(0xBA)
 
-        elif tag.startswith('UNK_BF'):
+        elif tag.startswith('JUMP'):
             output.append(0xBF)
-            for arg in reversed(tag_args(tag, typ="S")):
+            for arg in tag_args(tag, typ="S"):
                 output.append(int(arg[ai:], 16))
 
         elif tag.startswith('ZENNY_AMOUNT'):
@@ -268,6 +272,7 @@ def do_encode_text_block(text_block):
 
         bi += len(tag) + 2
 
+    output.extend((0x00, 0x00))
     return output
 
 
@@ -362,6 +367,8 @@ def do_insert_msg(original_msg, text_file):
 def do_decode_block(block_data):
     decoded_block = ''
     i = 0
+    sel_counter = 0
+
     while i < len(block_data):
         b1 = block_data[i]
         b2 = block_data[i + 1] if i + 1 < len(block_data) else None
@@ -380,14 +387,14 @@ def do_decode_block(block_data):
                 i += 2
 
             elif b1 == 0x87:
-                decoded_block += '<AUTO_LINE {:02X}{:02X}>\n'.format(b3, b2)
+                decoded_block += '<AUTO_CLEAR {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
 
             elif b1 == 0x89:  # 00 = White, 01 = Green?, 02 = Red, 04 = Blue, 05 = Purple
                 decoded_block += '<COLOR {:02X}>'.format(b2)
                 i += 1
 
-            elif b1 == 0x8A:  # TODO: Verify in game
+            elif b1 == 0x8A:  # TODO: Verify in game. Looks like a wrapper for something.
                 decoded_block += '<UNK_8A {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
@@ -420,15 +427,22 @@ def do_decode_block(block_data):
                 decoded_block += '<MOVE_FREE>'
 
             elif b1 == 0x96:  # Probably b2 and b3 are used for positioning. b4 no idea. Needs testing
-                decoded_block += '<SEL {:02X}{:02X}{:02X}>'.format(b2, b3, b4)
-                i += 3
+                decoded_block += '<SEL {:02X}{:02X}>'.format(b3, b2)
+                sel_counter += 1
+                i += 2
 
-            elif b1 == 0x97:  # 1 extra byte per item in the list. FF closes win. Other byte jump to text?
-                decoded_block += '<UNK_97 {:02X}>'.format(b2)
-                i += 1
+            elif b1 == 0x97:
+                decoded_block += '<MULTI T={:02X}'.format(b2)
+                arg_num = 0
+                args = block_data[i + 2: i + 2 + sel_counter]
+                while arg_num < sel_counter:
+                    decoded_block += ' {}={:02X}'.format(arg_num, args[arg_num])
+                    arg_num += 1
+                decoded_block += '>'
+                i += sel_counter + 1  # Account for the type argument
 
-            elif b1 == 0x99:  # TODO: Verify in game
-                decoded_block += '<JMP {:02X}{:02X}>'.format(b3, b2)
+            elif b1 == 0x99:
+                decoded_block += '<CALL {:02X}{:02X}>'.format(b2, b3)
                 i += 2
 
             elif b1 == 0x9A:
@@ -439,7 +453,7 @@ def do_decode_block(block_data):
                 decoded_block += '<GIVE {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0x9C:  # TODO: Verify in game
+            elif b1 == 0x9C:  # TODO: Verify in game. Probably completely wrong
                 decoded_block += '<MSG ID={:02X}{:02X} ?={:02X}{:02X}>\n'.format(b3, b2, b5, b4)
                 i += 4
 
@@ -464,8 +478,8 @@ def do_decode_block(block_data):
                 decoded_block += '<UNK_A6 {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0xAC:  # TODO: Verify in game
-                decoded_block += '<UNK_AC {:02X}{:02X}>'.format(b3, b2)
+            elif b1 == 0xAC:  # Weird cases.
+                decoded_block += '<EXE_JUMP {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
             elif b1 == 0xAE:
@@ -489,18 +503,18 @@ def do_decode_block(block_data):
             elif b1 == 0xB4:
                 decoded_block += '<RESTORE_SHIELD>'
 
-            elif b1 == 0xB9:  # TODO: Verify in game
-                decoded_block += '<UNK_B9 {:02X}{:02X}{:02X}>'.format(b4, b3, b2)
+            elif b1 == 0xB9:
+                decoded_block += '<IF A={:02X}{:02X} JMP={:02X}>'.format(b3, b2, b4)
                 i += 3
 
-            elif b1 == 0xBA:  # TODO: Verify in game
+            elif b1 == 0xBA:
                 decoded_block += '<COST>'
 
-            elif b1 == 0xBF:  # TODO: Verify in game
-                decoded_block += '<UNK_BF {:02X}{:02X}>'.format(b3, b2)
+            elif b1 == 0xBF:
+                decoded_block += '<JUMP {:02X}{:02X}>'.format(b2, b3)
                 i += 2
 
-            elif b1 == 0xC8:  # TODO: Verify in game
+            elif b1 == 0xC8:
                 decoded_block += '<ZENNY_AMOUNT>'
 
             elif b1 == 0xD0:
@@ -511,7 +525,7 @@ def do_decode_block(block_data):
                 decoded_block += '<UNK_D1 {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0xD3:  # TODO: Verify in game
+            elif b1 == 0xD3:
                 decoded_block += '<PRICE_ZENNY>'
 
             elif b1 == 0xD4:  # Some kind of variable
@@ -549,20 +563,22 @@ def do_extract_msg(file_path):
     output_file = open(file_path + ".txt", "w")
 
     ptr_tbl_offset = 0
-    block_number = 1
+    block_number = 0
 
     while ptr_tbl_offset < ptr_tbl_size:
         block_start_offset = header + bytes_to_uint(ptr_tbl_data[ptr_tbl_offset:ptr_tbl_offset + 2])
-        block_end_offset = header + bytes_to_uint(ptr_tbl_data[ptr_tbl_offset + 2:ptr_tbl_offset + 4])
+        # Accounting for the 0x0000 at the end of each block so -2
+        block_end_offset = header + bytes_to_uint(ptr_tbl_data[ptr_tbl_offset + 2:ptr_tbl_offset + 4]) - 2
         # If we reached the end of the offset table, use the file size for the last bank
-        if block_end_offset == 2048:
-            block_end_offset = header + file_size
+        if block_end_offset == 2048 - 2:
+            # Accounting for the 0x0000 at the end of each block so -2
+            block_end_offset = header + file_size - 2
 
         block_data = msg_file[block_start_offset:block_end_offset]
 
-        # Write each block with offset information
+        # Write each block with offset information (add 2 to block end offset to account for 0x0000)
         output_file.write(
-            "[Block {:02X}, String: {:04X}-{:04X}]\n".format(block_number, block_start_offset, block_end_offset)
+            "[Block {:02X}, String: {:04X}-{:04X}]\n".format(block_number, block_start_offset, block_end_offset + 2)
         )
 
         output_file.write(do_decode_block(block_data) + "\n\n")
