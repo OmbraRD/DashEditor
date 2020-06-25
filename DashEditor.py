@@ -3,7 +3,7 @@
 import sys
 from Formats.BIN import *
 from Formats.FONT import do_extract_font, do_insert_font
-from Formats.MSG import do_extract_msg, do_decode_block, do_insert_msg
+from Formats.MSG import do_extract_msg, do_decode_block, do_insert_msg, do_encode_text_block
 from Formats.TIM import do_extract_tim, do_insert_tim
 
 
@@ -24,11 +24,6 @@ elif not any(cmd in sys.argv[1] for cmd in ("-e", "-i")):
 # If the command argument is valid, check if file exists and open it
 elif not os.path.exists(sys.argv[2]):
     print("\nFile or folder not found")
-# If second argument is -e and third argument is file
-elif sys.argv[1] == "-e" and not os.path.isfile(sys.argv[2]):
-    print("\nExpected file. Provided folder")
-elif sys.argv[1] == "-i" and not os.path.isdir(sys.argv[2]):
-    print("\nExpected folder. Provided file")
 else:
     # Replace \ with / since Windows is compatible but not Linux or Mac
     # Ex: TEST\TEST2\FILE.BIN or TEST\TEST2 == TEST/TEST2/FILE.BIN or TEST/TEST2
@@ -43,7 +38,10 @@ else:
     # Ex: TEST/TEST2/TEST2.BIN == TEST/TEST2/TEST2.txt
     index_file_path = "{}/{}.txt".format(full_path_and_file_no_ext, file_name_only.replace(".BIN", ""))
 
-    if sys.argv[1] == "-e" and os.path.isfile(sys.argv[2]):
+    # If second argument is -e and third argument is file
+    if sys.argv[1] == "-e" and not os.path.isfile(sys.argv[2]):
+        print("\nExpected file. Provided folder")
+    elif sys.argv[1] == "-e" and os.path.isfile(sys.argv[2]):
         file_data = open(full_file_or_folder_name, "rb").read()
 
         if file_name_only == "ROCK_NEO.EXE":
@@ -61,7 +59,7 @@ else:
 
                 print("Pointer table contains {} blocks".format(ptr_tbl_size))
 
-                output_file = open(full_path_and_file_no_ext + ".txt", "w")
+                output_file = open(full_path_and_file_no_ext + ".TXT", "w")
 
                 ptr_tbl_ofs = 0
                 block_number = 1  # Starting from one so it aligns with EXE_JUMP
@@ -132,7 +130,81 @@ else:
                 # Close the index file and return
                 index_file.close()
 
-    # If argument is -i, pack BIN files
+    # If arg1 is -i, and arg2 is ROCK_NEO.EXE, insert EXE text
+    elif sys.argv[1] == "-i" and file_name_only == "ROCK_NEO.EXE":
+        exe_file = open(full_file_or_folder_name, "rb+")
+
+        try:
+            exe_file.seek(559296)
+            assert exe_file.read(17).decode() == "BASLUS-00603-DASH"
+        except AssertionError:
+            print("\nNot a valid NTSC MML PSX EXE file")
+        else:
+            text_file = os.path.splitext(full_file_or_folder_name)[0] + ".TXT"
+            print("\nInserting {}".format(text_file))
+
+            # Read TXT file
+            text = open(text_file, "r").read()
+
+            ptr_table: list = [2148052808]  # 8008AF48 is the first pointer
+
+            i = 0
+            current_block = 1
+            encoded_block: list = []
+
+            while i < len(text):
+                # Skip the [Blocks] text but separate them for recalculating pointers
+                c = text[i]
+
+                if c == '[':
+                    # Find the end of the textual Block info and start of next
+                    block_end = text.find(']', i + 1)
+                    next_block_start = text.find('[', i + 1)
+
+                    # If there is no more blocks after, read until the end of the file
+                    if next_block_start == -1:
+                        text_block = text[block_end + 2:-2]
+                    # If there is another block after, read until the beginning of the next block
+                    else:
+                        # Remove the \n\n at beginning and end of block
+                        text_block = text[block_end + 2:next_block_start - 2]
+
+                    # Encode text block to list of bytes
+                    encoded_text_block = do_encode_text_block(text_block)
+                    encoded_block.append(encoded_text_block[0:-2])
+
+                    if current_block != 968 // 4:
+                        # Append the size of the encoded block to the pointer table
+                        ptr_table.append(ptr_table[-1] + len(encoded_text_block) - 2)
+                        current_block += 1
+
+                i += 1
+
+            # Convert pointer table int to sequence of bytes
+            ptr_table_bytes: bytes = b''
+            for items in ptr_table:
+                if not items == 968 // 4:
+                    ptr_table_bytes += (ulong_to_bytes(items))
+
+            # Convert list of lists of encoded blocks to bytes
+            encoded_block_bytes = bytes([val for sublist in encoded_block for val in sublist])
+            # print("Encoded text data size is {} bytes".format(len(encoded_block_bytes)))
+
+            if len(encoded_block_bytes) > 7044:
+                print("ERROR: New encoded data is {} bytes. Size limit is 7044 bytes.".format(len(encoded_block_bytes)))
+            else:
+                # Write pointer new pointer table
+                exe_file.seek(512716)
+                exe_file.write(ptr_table_bytes)
+                # Write encoded data
+                exe_file.seek(505672)
+                exe_file.write(encoded_block_bytes)
+
+            exe_file.close()
+
+    # If argument is -i, and arg2 is FOLDER, pack BIN files
+    elif sys.argv[1] == "-i" and not os.path.isdir(sys.argv[2]):
+        print("\nExpected folder. Provided file")
     elif sys.argv[1] == "-i" and os.path.isdir(sys.argv[2]):
 
         if not os.path.exists(index_file_path):

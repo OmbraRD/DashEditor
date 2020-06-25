@@ -160,9 +160,9 @@ def do_encode_text_block(text_block):
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('MSG_CHECK'):
+        elif tag.startswith('MSG_IF'):
             output.append(0x9C)
-            for arg in reversed(tag_args(tag, typ="S")):
+            for arg in tag_args(tag, typ="M"):
                 output.append(int(arg[ai:], 16))
             bi += 1  # Account for the extra \n
 
@@ -189,8 +189,8 @@ def do_encode_text_block(text_block):
 
         elif tag.startswith('CAM'):
             output.append(0xA5)
-            for arg in tag_args(tag, typ="S"):
-                output.append(int(arg[ai:], 16))
+            for arg in tag_args(tag, typ="M"):
+                output.extend((int(arg, 16) & 0xFF, int(arg, 16) >> 8))
             bi += 1  # Account for the extra \n
 
         elif tag.startswith('UNK_A6'):
@@ -462,8 +462,8 @@ def do_decode_block(block_data):
                 decoded_block += '<AUDIO {:02X}{:02X}{:02X}{:02X}>\n'.format(b5, b4, b3, b2)
                 i += 4
 
-            elif b1 == 0x93:
-                decoded_block += '<DECOR WAT={:02X} BORDER={:02X}>\n'.format(b2, b3)
+            elif b1 == 0x93:  # WT 0=Normal, 1=Dim Full Screen, 2=Lighter, 4/8=No Color | BORDER=Padding of all sides
+                decoded_block += '<DECOR WT={:02X} PAD={:02X}>\n'.format(b2, b3)
                 i += 2
 
             elif b1 == 0x94:
@@ -496,9 +496,9 @@ def do_decode_block(block_data):
                 decoded_block += '<GIVE {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0x9C:  # TODO: Verify in game. Probably has to do with non repeatable dialogs
-                decoded_block += '<MSG_CHECK {:02X}{:02X}{:02X}>\n'.format(b4, b3, b2)
-                i += 3
+            elif b1 == 0x9C:  # Calls a dialog if it hasn't been used yet. Or the selected one.
+                decoded_block += '<MSG_IF 1={:02X} 2={:02X} 3={:02X} 4={:02X}>\n'.format(b2, b3, b4, b5)
+                i += 4
 
             elif b1 == 0x9F:
                 decoded_block += '<NEXT>\n\n'
@@ -517,9 +517,9 @@ def do_decode_block(block_data):
                 decoded_block += '<WAIT {:02X}{:02X}>\n'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0xA5:  # TODO: Verify in game. Possible camera animation.
-                decoded_block += '<CAM {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}{:02X}>' \
-                                 '\n'.format(b2, b3, b4, b5, b6, b7, b8, b9, b10, b11)
+            elif b1 == 0xA5:  # V=Character Visibility, Z=Axis (Zoom), X=X Axis (Rotation), P=Pitch, Y=Axis
+                decoded_block += '<CAM V={:02X}{:02X} Z={:02X}{:02X} X={:02X}{:02X} P={:02X}{:02X} Y={:02X}{:02X}>' \
+                                 '\n'.format(b3, b2, b5, b4, b7, b6, b9, b8, b11, b10)
                 i += 10
 
             elif b1 == 0xA6:  # TODO: Verify in game
