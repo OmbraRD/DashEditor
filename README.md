@@ -1,5 +1,5 @@
 # DashEditor
-**MegaMan Legends Translation Toolkit v0.9.5**  
+**MegaMan Legends Translation Toolkit v0.9.6**  
 **Created by \_Ombra_ of SadNES cITy Translations**  
 **Website: http://www.sadnescity.it**  
 
@@ -9,11 +9,12 @@ Implemented so far:
 * Disassembly and Reassembly of BIN files
 * Extraction/Insertion of FONT.DAT and KAIFONT.DAT to TIM
 * Extraction/Insertion of MSG files to TXT
+* Extraction/Insertion of text inside EXE file
 * Extraction/Insertion of MML TIM to regular TIM (4bpp and 8bpp)
 
 TODO:
 
-* Figure out more control characters in MSG files
+* Reallocation of text in EXE file (expansion)
 * Cleanup the code and optimize it (a lot)
 * Error checking, especially on MSG files
 
@@ -39,3 +40,7 @@ convert the TXT files to MSG, the TIM files to the proper format, reinsert and c
 
 Once the BIN is created you can use a tool like [CDMage 1.02.1 B5](https://www.romhacking.net/utilities/1435/
  "Romhacking.net") to reinsert the modified BIN file into the ISO of the game.
+ 
+ ##Notes:
+ 
+ - KAIFONT Width table: Inside ROCK_MAN.EXE at offset 0x7B67C to 0x7B700 (This needs testing)

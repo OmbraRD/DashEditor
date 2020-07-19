@@ -175,10 +175,10 @@ def do_encode_text_block(text_block):
             for arg in reversed(tag_args(tag, typ="S")):
                 output.append(int(arg[ai:], 16))
 
-        elif tag.startswith('AUTO'):
+        elif tag.startswith('NO_CHAR_SFX'):
             output.append(0xA1)
 
-        elif tag.startswith('MANUAL'):
+        elif tag.startswith('CHAR_SFX'):
             output.append(0xA2)
 
         elif tag.startswith('WAIT'):
@@ -507,11 +507,11 @@ def do_decode_block(block_data):
                 decoded_block += '<PAD {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0xA1:  # Window type? Not 100% sure
-                decoded_block += '<AUTO>'
+            elif b1 == 0xA1:
+                decoded_block += '<NO_CHAR_SFX>'
 
-            elif b1 == 0xA2:  # Window type? Not 100% sure
-                decoded_block += '<MANUAL>'
+            elif b1 == 0xA2:
+                decoded_block += '<CHAR_SFX>'
 
             elif b1 == 0xA4:
                 decoded_block += '<WAIT {:02X}{:02X}>\n'.format(b3, b2)

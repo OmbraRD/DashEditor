@@ -8,7 +8,7 @@ from Formats.TIM import do_extract_tim, do_insert_tim
 
 
 help_msg = (
-    """\nDashEditor v0.9.5 - Mega Man Legends Translation Toolkit
+    """\nDashEditor v0.9.6 - Mega Man Legends Translation Toolkit
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n
