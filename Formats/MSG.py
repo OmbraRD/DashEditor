@@ -51,9 +51,23 @@ def tag_args(full_tag: str, typ: str) -> list:
 
 
 def do_encode_text_block(text_block):
-    # Invert character table Dictionary
-    inverse_char_table = {v: k for k, v in char_table.items()}
+    # Read char table from DashEditor_insert.tbl file for insertion
+    char_table_insert: dict = {}
 
+    with open("DashEditor_insert.tbl", "r", encoding="utf-8") as tbl:
+        for line in tbl:
+            # Get the hex before the equal sign and convert it to int
+            opcode: int = int((line.strip().split("=", 1)[0]), 16)
+            # Get the command after the equal sign.
+            # Strip need to account for whitespaces so \n is specified.
+            # In case it is a \n replace it to account for Python using strings as literals.
+            command: str = line.strip("\n").split("=", 1)[1].replace("\\n", "\n")
+            char_table_insert[command] = opcode
+
+    # Invert character table Dictionary
+    # inverse_char_table: dict = {v: k for k, v in char_table_insert.items()}
+
+    # Proceed to encoding
     output = []
     bi = 0
 
@@ -62,7 +76,7 @@ def do_encode_text_block(text_block):
         c = text_block[bi]
         # If char is not < then read from table and write to output
         if c != '<':
-            output.append(inverse_char_table[c])
+            output.append(char_table_insert[c])
             bi += 1
             continue
 
@@ -73,8 +87,8 @@ def do_encode_text_block(text_block):
         ai = 0
 
         # Check which tag and convert
-        if "<{}>".format(tag) in inverse_char_table:
-            output.append(inverse_char_table["<{}>".format(tag)])
+        if "<{}>".format(tag) in char_table_insert:
+            output.append(char_table_insert["<{}>".format(tag)])
 
         elif tag.startswith('CLOSE'):
             output.append(0x84)
