@@ -64,6 +64,7 @@ def do_encode_text_block(text_block):
             command: str = line.strip("\n").split("=", 1)[1].replace("\\n", "\n")
             char_table_insert[command] = opcode
 
+    tbl.close()
     # Invert character table Dictionary
     # inverse_char_table: dict = {v: k for k, v in char_table_insert.items()}
 

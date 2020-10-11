@@ -84,5 +84,6 @@ def do_extract_font(file_path):
         clut + tim_img_size + tim_fb_img_x + tim_fb_img_y + tim_width + tim_height +
         bytearray(decoded_pixel_data_top) + bytearray(decoded_pixel_data_bottom)
     )
+    output_file.close()
 
     print("\nFound font. Extraction complete.")
