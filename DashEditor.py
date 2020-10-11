@@ -8,7 +8,7 @@ from Formats.TIM import do_extract_tim, do_insert_tim
 
 
 help_msg = (
-    """\nDashEditor v0.9.6 - Mega Man Legends Translation Toolkit
+    """\nDashEditor v0.9.7 - Mega Man Legends Translation Toolkit
 Created by _Ombra_ of SadNES cITy Translations
 Website: http://www.sadnescity.it\n
 DashEditor.py [option] [file_or_folder]\n
@@ -25,7 +25,7 @@ elif not any(cmd in sys.argv[1] for cmd in ("-e", "-i")):
 elif not os.path.exists(sys.argv[2]):
     print("\nFile or folder not found")
 else:
-    # Replace \ with / since Windows is compatible but not Linux or Mac
+    # Replace \ with / since Windows is compatible with both but not Linux or Mac
     # Ex: TEST\TEST2\FILE.BIN or TEST\TEST2 == TEST/TEST2/FILE.BIN or TEST/TEST2
     full_file_or_folder_name: str = sys.argv[2].replace("\\", "/")
     # Get only the paths from the normalized path
@@ -36,7 +36,7 @@ else:
     file_name_only = os.path.basename(full_file_or_folder_name)
     # Full path to the index file
     # Ex: TEST/TEST2/TEST2.BIN == TEST/TEST2/TEST2.txt
-    index_file_path = "{}/{}.txt".format(full_path_and_file_no_ext, file_name_only.replace(".BIN", ""))
+    index_file_path = "{}/{}.txt".format(full_path_and_file_no_ext, os.path.splitext(file_name_only)[0])
 
     # If second argument is -e and third argument is file
     if sys.argv[1] == "-e" and not os.path.isfile(sys.argv[2]):

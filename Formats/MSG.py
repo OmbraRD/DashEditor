@@ -318,7 +318,7 @@ def do_encode_text_block(text_block):
 def do_insert_msg(original_msg, text_file):
     print("\nInserting {}".format(original_msg))
     # Open TXT file
-    text = open(text_file, "r").read()
+    text = open(text_file, "r", encoding="utf-8").read()
 
     # Open MSG file
     msg_file = open(original_msg, "rb+")
@@ -542,7 +542,7 @@ def do_decode_block(block_data):
                 decoded_block += '<OPTION {:02X}{:02X}>'.format(b3, b2)
                 i += 2
 
-            elif b1 == 0xAD:  # Similar to 0x96 but apparently able to move the curson position with multiple options
+            elif b1 == 0xAD:  # Similar to 0x96 but apparently able to move the cursor position with multiple options
                 decoded_block += '<UNK_AD {:02X}{:02X}{:02X}{:02X}{:02X}{:02X}>'.format(b2, b3, b4, b5, b6, b7)
                 i += 6
 
@@ -636,7 +636,7 @@ def do_extract_msg(file_path):
 
     print("Pointer table contains {} blocks".format(int(ptr_tbl_size // 2)))
 
-    output_file = open(file_path + ".txt", "w")
+    output_file = open(file_path + ".txt", "w", encoding="utf-8")
 
     ptr_tbl_offset = 0
     block_number = 0
