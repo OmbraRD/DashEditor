@@ -41,6 +41,6 @@ convert the TXT files to MSG, the TIM files to the proper format, reinsert and c
 Once the BIN is created you can use a tool like [CDMage 1.02.1 B5](https://www.romhacking.net/utilities/1435/
  "Romhacking.net") to reinsert the modified BIN file into the ISO of the game.
  
-##Notes:
+## Notes:
  
  - KAIFONT Width table: Inside ROCK_MAN.EXE at offset 0x7B67C to 0x7B700 (This needs testing)
