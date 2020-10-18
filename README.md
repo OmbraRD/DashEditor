@@ -24,23 +24,29 @@ DashEditor.py [option] [file or folder]
   -e   extracts che content of BIN file.
   -i   inserts an extracted folder to BIN file.
 ```
+##### EXTRACTION:
+1. Use [CDMage 1.02.1 B5](https://www.romhacking.net/utilities/1435/
+ "Romhacking.net") to extract the contents of the ISO to a folder.
+2. Put the software in the \CDDATA\ folder.
+3. Either run the software with the -e option or use the batch file to extract everything at once.
 
-The software works by extracting the content of BIN files to a folder with the same name. Once the BIN is extracted you
-will find the original files and some decoded files as follows:
+##### INSERTION:
+1. Move (or delete) the *.BIN files inside the \CDDATA\DAT\ folder.
+2. Either run the software with the -i option or use the batch file to insert everything at once.
+3. Use [CDMage 1.02.1 B5](https://www.romhacking.net/utilities/1435/
+ "Romhacking.net") to replace the BIN files inside the \CDDATA\DAT\ folder.
+
+## Information:
+The software works by extracting the content of BIN files inside the CDDATA\DAT\ folder to a folder with the same name.
+Once the BIN is extracted you will find the original files and some decoded files as follows:
 
 * TIM: There are a few types. If you see a TIM terminated with _EXT.TIM you should be able to use an editor like
 [Tim2view](https://github.com/lab313ru/tim2view/releases "Tim2view Github") to export the image to PNG for editing.
-Once edited, the PNGs can be re-imported directly onto the _EXT.TIM files.
+Once edited, the PNGs can be re-imported directly onto the _EXT.TIM files. (Pay attetion to the used palettes)
 * MSG: These contain most of the game's text. These will be extracted to TXT format. You can edit these freely by
 respecting the spacing, ending characters and special characters.
 
-Once the files are modified you just need to move the original BIN away from the folder (since we don't want to
-overwrite the original files... just in case) and run the insert command by specifying the folder name. This will
-convert the TXT files to MSG, the TIM files to the proper format, reinsert and create a new BIN file.
-
-Once the BIN is created you can use a tool like [CDMage 1.02.1 B5](https://www.romhacking.net/utilities/1435/
- "Romhacking.net") to reinsert the modified BIN file into the ISO of the game.
- 
 ## Notes:
  
- - KAIFONT Width table: Inside ROCK_MAN.EXE at offset 0x7B67C to 0x7B700 (This needs testing)
+ - KAIFONT.DAT Width table: Inside ROCK_MAN.EXE at offset 0x7B67C to 0x7B700 (This needs testing)
+ - ROCK_MAN.EXE text limit is 7044 bytes (for now)
